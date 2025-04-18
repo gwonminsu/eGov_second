@@ -13,7 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package egovframework.example.sample.service;
+package egovframework.second.sample.service;
+
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
+
 
 /**
  * @Class Name : SampleVO.java
@@ -31,6 +37,11 @@ package egovframework.example.sample.service;
  *
  *  Copyright (C) by MOPAS All right reserved.
  */
+
+@Getter
+@Setter
+@ToString
+@NoArgsConstructor
 public class SampleVO extends SampleDefaultVO {
 
 	private static final long serialVersionUID = 1L;
@@ -49,45 +60,5 @@ public class SampleVO extends SampleDefaultVO {
 
 	/** 등록자 */
 	private String regUser;
-
-	public String getId() {
-		return id;
-	}
-
-	public void setId(String id) {
-		this.id = id;
-	}
-
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
-	}
-
-	public String getDescription() {
-		return description;
-	}
-
-	public void setDescription(String description) {
-		this.description = description;
-	}
-
-	public String getUseYn() {
-		return useYn;
-	}
-
-	public void setUseYn(String useYn) {
-		this.useYn = useYn;
-	}
-
-	public String getRegUser() {
-		return regUser;
-	}
-
-	public void setRegUser(String regUser) {
-		this.regUser = regUser;
-	}
 
 }

@@ -2,7 +2,7 @@
 <beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.0.xsd">
 
-	<!-- SqlSession setup for MyBatis Database Layer -->
+	<!--SqlSessionFactoryBean: SqlSessionFactory 생성 -->
 	<bean id="sqlSession" class="org.mybatis.spring.SqlSessionFactoryBean">
 		<property name="dataSource" ref="dataSource" />
 		<property name="configLocation" value="classpath:/egovframework/sqlmap/homework/sql-mapper-config.xml" />
@@ -11,7 +11,7 @@
 
 	<!-- MapperConfigurer setup for MyBatis Database Layer with @Mapper("deptMapper") in DeptMapper Interface -->
  	<bean class="org.egovframe.rte.psl.dataaccess.mapper.MapperConfigurer">
-		<property name="basePackage" value="egovframework.example.sample.service.impl" />
+		<property name="basePackage" value="egovframework.second.sample.service.impl" />
 	</bean>
     
 </beans>

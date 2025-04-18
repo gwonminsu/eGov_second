@@ -13,14 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package egovframework.example.sample.service.impl;
+package egovframework.second.sample.service.impl;
 
 import java.util.List;
 
-import egovframework.example.sample.service.SampleDefaultVO;
-import egovframework.example.sample.service.SampleVO;
-
 import org.egovframe.rte.psl.dataaccess.mapper.Mapper;
+
+import egovframework.second.sample.service.SampleDefaultVO;
+import egovframework.second.sample.service.SampleVO;
 
 /**
  * sample에 관한 데이터처리 매퍼 클래스

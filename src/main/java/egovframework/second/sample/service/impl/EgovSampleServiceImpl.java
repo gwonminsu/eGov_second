@@ -13,20 +13,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package egovframework.example.sample.service.impl;
+package egovframework.second.sample.service.impl;
 
 import java.util.List;
 
-import egovframework.example.sample.service.SampleDefaultVO;
-import egovframework.example.sample.service.SampleVO;
+import org.egovframe.rte.fdl.cmmn.EgovAbstractServiceImpl;
+import org.egovframe.rte.fdl.idgnr.EgovIdGnrService;
 
-import org.egovframe.rte.psl.dataaccess.EgovAbstractDAO;
+import javax.annotation.Resource;
 
-import org.springframework.stereotype.Repository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
+
+import egovframework.second.sample.service.EgovSampleService;
+import egovframework.second.sample.service.SampleDefaultVO;
+import egovframework.second.sample.service.SampleVO;
 
 /**
- * @Class Name : SampleDAO.java
- * @Description : Sample DAO Class
+ * @Class Name : EgovSampleServiceImpl.java
+ * @Description : Sample Business Implement Class
  * @Modification Information
  * @
  * @  수정일      수정자              수정내용
@@ -41,8 +47,22 @@ import org.springframework.stereotype.Repository;
  *  Copyright (C) by MOPAS All right reserved.
  */
 
-@Repository("sampleDAO")
-public class SampleDAO extends EgovAbstractDAO {
+@Service("sampleService")
+public class EgovSampleServiceImpl extends EgovAbstractServiceImpl implements EgovSampleService {
+
+	private static final Logger LOGGER = LoggerFactory.getLogger(EgovSampleServiceImpl.class);
+
+	/** SampleDAO */
+	// TODO ibatis 사용
+	@Resource(name = "sampleDAO")
+	private SampleDAO sampleDAO;
+	// TODO mybatis 사용
+	//  @Resource(name="sampleMapper")
+	//	private SampleMapper sampleDAO;
+
+	/** ID Generation */
+	@Resource(name = "egovIdGnrService")
+	private EgovIdGnrService egovIdGnrService;
 
 	/**
 	 * 글을 등록한다.
@@ -50,8 +70,17 @@ public class SampleDAO extends EgovAbstractDAO {
 	 * @return 등록 결과
 	 * @exception Exception
 	 */
+	@Override
 	public String insertSample(SampleVO vo) throws Exception {
-		return (String) insert("sampleDAO.insertSample", vo);
+		LOGGER.debug(vo.toString());
+
+		/** ID Generation Service */
+		String id = egovIdGnrService.getNextStringId();
+		vo.setId(id);
+		LOGGER.debug(vo.toString());
+
+		sampleDAO.insertSample(vo);
+		return id;
 	}
 
 	/**
@@ -60,8 +89,9 @@ public class SampleDAO extends EgovAbstractDAO {
 	 * @return void형
 	 * @exception Exception
 	 */
+	@Override
 	public void updateSample(SampleVO vo) throws Exception {
-		update("sampleDAO.updateSample", vo);
+		sampleDAO.updateSample(vo);
 	}
 
 	/**
@@ -70,8 +100,9 @@ public class SampleDAO extends EgovAbstractDAO {
 	 * @return void형
 	 * @exception Exception
 	 */
+	@Override
 	public void deleteSample(SampleVO vo) throws Exception {
-		delete("sampleDAO.deleteSample", vo);
+		sampleDAO.deleteSample(vo);
 	}
 
 	/**
@@ -80,28 +111,34 @@ public class SampleDAO extends EgovAbstractDAO {
 	 * @return 조회한 글
 	 * @exception Exception
 	 */
+	@Override
 	public SampleVO selectSample(SampleVO vo) throws Exception {
-		return (SampleVO) select("sampleDAO.selectSample", vo);
+		SampleVO resultVO = sampleDAO.selectSample(vo);
+		if (resultVO == null)
+			throw processException("info.nodata.msg");
+		return resultVO;
 	}
 
 	/**
 	 * 글 목록을 조회한다.
-	 * @param searchMap - 조회할 정보가 담긴 Map
+	 * @param searchVO - 조회할 정보가 담긴 VO
 	 * @return 글 목록
 	 * @exception Exception
 	 */
+	@Override
 	public List<?> selectSampleList(SampleDefaultVO searchVO) throws Exception {
-		return list("sampleDAO.selectSampleList", searchVO);
+		return sampleDAO.selectSampleList(searchVO);
 	}
 
 	/**
 	 * 글 총 갯수를 조회한다.
-	 * @param searchMap - 조회할 정보가 담긴 Map
+	 * @param searchVO - 조회할 정보가 담긴 VO
 	 * @return 글 총 갯수
 	 * @exception
 	 */
+	@Override
 	public int selectSampleListTotCnt(SampleDefaultVO searchVO) {
-		return (Integer) select("sampleDAO.selectSampleListTotCnt", searchVO);
+		return sampleDAO.selectSampleListTotCnt(searchVO);
 	}
 
 }
