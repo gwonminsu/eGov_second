@@ -7,16 +7,16 @@ import javax.annotation.Resource;
 import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.stereotype.Repository;
 
-import egovframework.second.homework.service.TestVO;
+import egovframework.second.homework.service.UserVO;
 
-@Repository("testDAO")
-public class TestDAO {
+@Repository("userDAO")
+public class UserDAO {
 	
     @Resource(name = "sqlSession")
     protected SqlSessionTemplate sqlSession;
 
     // 전체 목록 조회
-    public List<TestVO> selectTestList() throws Exception {
-        return sqlSession.selectList("testDAO.selectTestList");
+    public List<UserVO> selectUserList() throws Exception {
+        return sqlSession.selectList("userDAO.selectUserList");
     }
 }
