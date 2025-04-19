@@ -9,7 +9,7 @@
 <script src="<c:url value='/js/jquery-3.6.0.min.js'/>"></script>
 
 <!-- 사용자 리스트 json 가져오는 api 호출 url -->
-<c:url value="/userList.do" var="userListUrl"/>
+<c:url value="/api/userList.do" var="userListUrl"/>
 </head>
 <body>
     <h2>Test List</h2>
@@ -40,10 +40,10 @@
 	                $.each(data, function(i, item) {
 	                    var row = '<tr>' +
 	                              '<td>' + item.idx + '</td>' +
-	                              '<td>' + item.user_id + '</td>' +
+	                              '<td>' + item.userId + '</td>' +
 	                              '<td>' + item.password + '</td>' +
-	                              '<td>' + item.user_name + '</td>' +
-	                              '<td>' + item.created_at + '</td>' +
+	                              '<td>' + item.userName + '</td>' +
+	                              '<td>' + item.createdAt + '</td>' +
 	                              '</tr>';
 	                    $tbody.append(row);  
 	                });
