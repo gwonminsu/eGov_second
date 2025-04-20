@@ -152,6 +152,13 @@
 			<artifactId>jackson-databind</artifactId>
 			<version>2.15.2</version>
 		</dependency>
+		
+		<!-- 비밀번호 암호화를 위한 의존성(BCryptPasswordEncoder) -->
+		<dependency>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-crypto</artifactId>
+			<version>5.8.8</version>
+		</dependency>
         
         <!-- mysql이나 oracle DB 사용시 아래 설정 추가  
         <dependency>

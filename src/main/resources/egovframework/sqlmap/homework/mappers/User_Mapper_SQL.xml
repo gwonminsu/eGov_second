@@ -22,12 +22,4 @@
 		VALUES (#{idx}, #{userId}, #{password}, #{userName}, NOW())
 	</insert>
 	
-	<!-- 로그인 (아이디와 비번 일치 조회) -->
-	<select id="selectByCredentials" parameterType="userVO" resultType="userVO">
-		SELECT idx, user_id AS userId, password, user_name AS userName, created_at
-		FROM "user"
-		WHERE user_id = #{userId}
-		AND password = #{password}
-	</select>
-	
 </mapper>

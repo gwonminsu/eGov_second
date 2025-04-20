@@ -30,8 +30,4 @@ public class UserDAO {
         sqlSession.insert("userDAO.insertUser", user);
     }
     
-    // 로그인(사용자 검증)
-    public UserVO selectByCredentials(UserVO user) throws Exception {
-        return sqlSession.selectOne("userDAO.selectByCredentials", user);
-    }
 }
