@@ -34,9 +34,13 @@
             <bean class="egovframework.second.cmmn.web.EgovBindingInitializer"/>
         </property>
     </bean>
+    
+    <bean id="loginInterceptor" class="egovframework.second.cmmn.web.LoginInterceptor"/>
     <bean class="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping">
         <property name="interceptors">
             <list>
+            	<!-- 로그인 인터셉터 -->
+            	<ref bean="loginInterceptor"/>  
                 <ref bean="localeChangeInterceptor" />
             </list>
         </property>

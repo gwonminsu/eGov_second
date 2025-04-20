@@ -24,4 +24,22 @@ public class ViewController {
 		return "testPage";
 	}
 	
+	// 로그인 페이지
+	@RequestMapping(value = "/login.do")
+	public String loginPage() throws Exception {
+		return "login";
+	}
+	
+	// 회원가입 페이지
+	@RequestMapping(value = "/register.do")
+	public String registerPage() throws Exception {
+		return "register";
+	}
+	
+	// 게시판 페이지
+	@RequestMapping(value = "/boardList.do")
+	public String boardListPage() throws Exception {
+		return "boardList";
+	}
+	
 }

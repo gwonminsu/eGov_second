@@ -10,9 +10,27 @@
 	
 	<!-- 사용자 리스트 json 가져오는 api 호출 url -->
 	<c:url value="/api/user/userList.do" var="userListUrl"/>
+	<!-- 로그인 페이지 url -->
+	<c:url value="/login.do" var="loginUrl"/>
+	<!-- 로그아웃 api 호출 url -->
+	<c:url value="/api/user/logout.do" var="logoutUrl" />
+	
+	<!-- 세션에 담긴 사용자 이름을 JS 변수로 -->
+	<script>
+		// 서버에서 렌더링 시점에 loginUser.userName 이 없으면 빈 문자열로
+		var loginUserName = '<c:out value="${sessionScope.loginUser.userName}" default="" />';
+	</script>
 </head>
 <body>
-    <h2>Test List</h2>
+    <h2>사진 게시판(임시)</h2>
+    
+	<!-- 사용자 로그인 상태 영역 -->
+	<div id="userInfo">
+		<span id="loginMsg"></span>
+		<button type="button" id="btnGoLogin">로그인하러가기</button>
+		<button type="button" id="btnLogout">로그아웃</button>
+	</div>
+	
     <table id="userListTbl" border="1">
     	<thead>
 	        <tr>
@@ -27,6 +45,7 @@
     </table>
     
     <script>
+    	// 페이지 렌더링 시 사용자 리스트 가져오기
 	    $(document).ready(function() {
 	    	console.log('AJAX 호출 URL=', '${userListUrl}');
 	        $.ajax({
@@ -51,6 +70,39 @@
 	            error: function(xhr, status, error) {
 	                console.error('AJAX 에러:', error);
 	            }
+	        });
+	    });
+	    
+	    $(function(){
+	        // 로그인 여부에 따라 버튼 토글
+	        if (loginUserName) {
+				$('#loginMsg').text('현재 로그인 중인 사용자: ' + loginUserName);
+				$('#btnGoLogin').hide();
+				$('#btnLogout').show();
+	        } else {
+				$('#welcomeMsg').text('');
+				$('#btnGoLogin').show();
+				$('#btnLogout').hide();
+	        }
+	    	
+	    	// 로그인 버튼 핸들러
+	    	$('#btnGoLogin').click(function() {
+	    		// 로그인 페이지 이동
+	    		window.location.href = '${loginUrl}';
+	    	});
+	    	
+	        // 3) 로그아웃
+	        $('#btnLogout').click(function(){
+				$.ajax({
+					url: '${logoutUrl}',
+					type: 'POST',
+					success: function(){
+						location.reload();
+					},
+					error: function(){
+						alert('로그아웃 중 오류 발생');
+					}
+				});
 	        });
 	    });
     </script>

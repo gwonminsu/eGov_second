@@ -27,4 +27,20 @@ public class UserServiceImpl extends EgovAbstractServiceImpl implements UserServ
 	 public List<UserVO> getUserList() throws Exception {
 	     return userDAO.selectUserList();
 	 }
+
+	 // 회원가입
+	 @Override
+	 public void registerUser(UserVO user) throws Exception {
+         // 중복 검사(사용자 id가 있는지 검사)
+         if (userDAO.selectByUserId(user.getUserId()) != null) {
+        	 throw new RuntimeException("이미 존재하는 아이디입니다");
+         }
+         userDAO.insertUser(user);
+	 }
+
+	 // 로그인
+	 @Override
+	 public UserVO authenticate(UserVO user) throws Exception {
+		 return userDAO.selectByCredentials(user);
+	 }
 }
