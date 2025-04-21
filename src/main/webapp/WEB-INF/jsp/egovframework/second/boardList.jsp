@@ -10,12 +10,15 @@
 	
 	<!-- 게시글 목록 json 가져오는 api 호출 url -->
 	<c:url value="/api/board/list.do" var="boardListUrl"/>
+	<!-- 로그아웃 api 호출 url -->
+	<c:url value="/api/user/logout.do" var="logoutUrl" />
 	<!-- 로그인 페이지 url -->
 	<c:url value="/login.do" var="loginUrl"/>
 	<!-- 게시글 작성 페이지 url -->
 	<c:url value="/boardForm.do" var="boardFormUrl"/>
-	<!-- 로그아웃 api 호출 url -->
-	<c:url value="/api/user/logout.do" var="logoutUrl" />
+	<!-- 게시글 상세 페이지 url -->
+	<c:url value="/boardDetail.do" var="boardDetailUrl"/>
+
 	
 	<!-- 세션에 담긴 사용자 이름을 JS 변수로 -->
 	<script>
@@ -63,11 +66,12 @@
 	                var $tbody = $('#boardListTbl').find('tbody');
 	                $tbody.empty();
 	                $.each(data, function(i, item) {
+	                	var detailLink = '${boardDetailUrl}?idx=' + encodeURIComponent(item.idx);
 	                    var row = '<tr>' +
 	                              '<td>' + item.idx + '</td>' +
 	                              '<td>' + item.userIdx + '</td>' +
 	                              '<td>' + item.userName + '</td>' +
-	                              '<td>' + item.title + '</td>' +
+	                              '<td><a href="' + detailLink + '">' + item.title + '</a></td>' +
 	                              '<td>' + item.hit + '</td>' +
 	                              '<td>' + item.createdAt + '</td>' +
 	                              '<td>' + item.updatedAt + '</td>' +

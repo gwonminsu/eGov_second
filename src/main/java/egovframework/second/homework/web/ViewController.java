@@ -44,8 +44,14 @@ public class ViewController {
 	
 	// 글쓰기 폼 페이지
 	@RequestMapping(value = "/boardForm.do")
-	public String showBoardForm() {
+	public String showBoardForm() throws Exception {
 		return "boardForm";
+	}
+	
+	// 게시글 상세 페이지
+	@RequestMapping(value = "/boardDetail.do")
+	public String detailPage() throws Exception {
+	return "boardDetail";
 	}
 	
 }

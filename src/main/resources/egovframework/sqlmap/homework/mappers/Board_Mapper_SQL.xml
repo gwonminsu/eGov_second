@@ -44,8 +44,15 @@
 		FROM board b
 		JOIN "user" u
 		ON b.user_idx = u.idx
-		WHERE idx = #{idx}
+		WHERE b.idx = #{idx}
 	</select>
+	
+	<!-- 조회수 증가 -->
+	<update id="incrementHit" parameterType="String">
+		UPDATE board
+		SET hit = hit + 1
+		WHERE idx = #{idx}
+	</update>
 
 	<!-- 수정 -->
 	<update id="updateBoard" parameterType="boardVO">

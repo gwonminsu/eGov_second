@@ -38,6 +38,7 @@ public class BoardServiceImpl extends EgovAbstractServiceImpl implements BoardSe
 	// 게시글 상세 조회
 	@Override
 	public BoardVO getBoard(String idx) throws Exception {
+		boardDAO.incrementHit(idx); // 조회수 증가
 		return boardDAO.selectBoard(idx);
 	}
 

@@ -10,9 +10,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.validation.BeanPropertyBindingResult;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springmodules.validation.commons.DefaultBeanValidator;
 
@@ -65,13 +67,15 @@ public class BoardController {
     }
 
     // 게시글 상세
-    @PostMapping(value="/detail.do", consumes="application/json", produces="application/json")
-    public BoardVO detail(@RequestBody Map<String,String> param) throws Exception {
-        return boardService.getBoard(param.get("idx"));
+    @GetMapping(value="/detail.do", produces="application/json")
+    public BoardVO detail(@RequestParam String idx) throws Exception {
+    	BoardVO vo = boardService.getBoard(idx);
+    	log.info("게시글 JSON 데이터: {}", vo);
+        return vo;
     }
 
     // 게시글 수정
-    @PostMapping(value="/edit.do", consumes="application/json", produces="application/json")
+    @PostMapping(value="/edit.do", produces="application/json")
     public Map<String,String> edit(@RequestBody BoardVO vo) {
         try {
             boardService.modifyBoard(vo);

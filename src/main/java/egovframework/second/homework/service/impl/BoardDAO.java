@@ -21,22 +21,27 @@ public class BoardDAO {
 	}
     
     // 목록 조회
-    public List<BoardVO> selectBoardList() {
+    public List<BoardVO> selectBoardList() throws Exception {
         return sqlSession.selectList("boardDAO.selectBoardList");
     }
     
     // 상세 조회
-    public BoardVO selectBoard(String idx) {
+    public BoardVO selectBoard(String idx) throws Exception {
         return sqlSession.selectOne("boardDAO.selectBoardByIdx", idx);
     }
     
+    // 조회수 증가
+	public void incrementHit(String idx) throws Exception {
+		sqlSession.update("boardDAO.incrementHit", idx);
+	}
+    
     // 수정
-    public void updateBoard(BoardVO vo) {
+    public void updateBoard(BoardVO vo) throws Exception {
         sqlSession.update("boardDAO.updateBoard", vo);
     }
     
     // 삭제
-    public void deleteBoard(String idx) {
+    public void deleteBoard(String idx) throws Exception {
         sqlSession.delete("boardDAO.deleteBoard", idx);
     }
 }
