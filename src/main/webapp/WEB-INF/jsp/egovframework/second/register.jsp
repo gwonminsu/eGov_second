@@ -12,13 +12,29 @@
 </head>
 <body>
 	<h2>회원가입</h2>
-	<label>아이디: <input type="text" id="userId"/></label><br/>
-	<label>비밀번호: <input type="password" id="password"/></label><br/>
-	<label>이름: <input type="text" id="userName"/></label><br/>
+	<label>아이디: 
+		<input type="text" id="userId" required maxlength="15"/>
+	</label><br/>
+	<label>비밀번호: 
+		<input type="password" id="password" required maxlength="15"/>
+	</label><br/>
+	<label>이름: 
+		<input type="text" id="userName" required maxlength="20"/>
+	</label><br/>
 	<button id="btnRegister">가입하기</button>
 	
 	<script>
     $('#btnRegister').click(function(){
+    	// 폼 검증(하나라도 인풋이 비어있으면 알림)
+		var idVal   = $('#userId')[0];
+		var passwordVal  = $('#password')[0];
+		var nameVal = $('#userName')[0];
+		
+		if (!idVal.reportValidity()) return;
+		if (!passwordVal.reportValidity()) return;
+		if (!nameVal.reportValidity()) return;
+    	
+		// 검증 통과 시 회원가입 api 실행
 		var data={userId:$('#userId').val(), password:$('#password').val(), userName:$('#userName').val()};
 		$.ajax({
 			url:'<c:url value="/api/user/register.do"/>',

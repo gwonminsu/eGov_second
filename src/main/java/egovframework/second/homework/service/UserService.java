@@ -12,5 +12,5 @@ public interface UserService {
 	void registerUser(UserVO user) throws Exception;
 
 	// 로그인(사용자 아이디 비밀번호 일치 여부 조회)
-	UserVO authenticate(UserVO user) throws Exception;
+	UserVO authenticate(LoginVO user) throws Exception;
 }

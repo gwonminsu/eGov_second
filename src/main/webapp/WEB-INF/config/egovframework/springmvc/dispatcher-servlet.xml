@@ -7,7 +7,7 @@
                 http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.0.xsd
                 http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-4.0.xsd">
 	<!-- 스프링 MVC 컴포넌트들을 그것의 디폴트 설정을 가지고 활성화하기 위해 사용 -->
-	<mvc:annotation-driven>
+	<mvc:annotation-driven validator="beanValidator">
 	    <mvc:message-converters>
 	        <bean class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter">
 	            <property name="objectMapper">

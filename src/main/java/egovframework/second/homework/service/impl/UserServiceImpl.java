@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import egovframework.second.homework.service.LoginVO;
 import egovframework.second.homework.service.UserService;
 import egovframework.second.homework.service.UserVO;
 
@@ -49,7 +50,7 @@ public class UserServiceImpl extends EgovAbstractServiceImpl implements UserServ
 
 	 // 로그인(입력 비밀번호와 DB 해시가 일치하는지 검사)
 	 @Override
-	 public UserVO authenticate(UserVO user) throws Exception {
+	 public UserVO authenticate(LoginVO user) throws Exception {
 		 UserVO dbUser = userDAO.selectByUserId(user.getUserId()); // 아이디로 DB 조회
 		 if (dbUser == null) {
 			 log.info("로그인 실패: DB에 아이디(" + user.getUserId() + ")가 존재하지 않음");

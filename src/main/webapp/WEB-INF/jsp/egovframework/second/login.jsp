@@ -12,12 +12,24 @@
 </head>
 <body>
 	<h2>로그인</h2>
-	<label>아이디: <input type="text" id="userId"/></label><br/>
-	<label>비번: <input type="password" id="password"/></label><br/>
+	<label>아이디: 
+		<input type="text" id="userId" required maxlength="15"/>
+	</label><br/>
+	<label>비밀번호: 
+		<input type="password" id="password" required maxlength="15"/>
+	</label><br/>
 	<button id="btnLogin">로그인</button>
 	<button type="button" id="btnGoRegister">회원가입</button>
 	<script>
     $('#btnLogin').click(function(){
+    	// 폼 검증(하나라도 인풋이 비어있으면 알림)
+		var idVal = $('#userId')[0];
+		var passwordVal = $('#password')[0];
+		
+		if (!idVal.reportValidity()) return;
+		if (!passwordVal.reportValidity()) return;
+    	
+		// 검증 통과 시 로그인 api 실행
 		var data={userId:$('#userId').val(), password:$('#password').val()};
 		$.ajax({
 			url:'<c:url value="/api/user/login.do"/>',

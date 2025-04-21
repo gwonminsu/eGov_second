@@ -6,17 +6,26 @@
 <form-validation>
 
     <formset>
-        <form name="sampleVO">
-        	<field property="name" depends="required">
-        		<arg0 key="title.sample.name" />
+		<form name="userVO">
+			<field property="userName" depends="required">
+				<arg0 key="title.user.name" />
 			</field>
-			<field property="description" depends="required">
-                <arg0 key="title.sample.description" />
-            </field>
-        	<field property="regUser" depends="required">
-        		<arg0 key="title.sample.regUser" />
+			<field property="userId" depends="required">
+				<arg0 key="title.user.id" />
 			</field>
-        </form>
+			<field property="password" depends="required">
+				<arg0 key="title.user.regUser" />
+			</field>
+		</form>
+        
+		<form name="loginVO">
+			<field property="userId" depends="required">
+				<arg0 key="title.user.id" />
+			</field>
+			<field property="password" depends="required">
+				<arg0 key="title.user.regUser" />
+			</field>
+		</form>
     </formset>
 
 </form-validation>
