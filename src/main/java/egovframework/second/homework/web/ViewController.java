@@ -6,6 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 
 import egovframework.second.homework.service.UserService;
 
@@ -43,13 +44,13 @@ public class ViewController {
 	}
 	
 	// 글쓰기 폼 페이지
-	@RequestMapping(value = "/boardForm.do")
+	@RequestMapping(value = "/boardForm.do", method={RequestMethod.GET, RequestMethod.POST} )
 	public String showBoardForm() throws Exception {
 		return "boardForm";
 	}
 	
 	// 게시글 상세 페이지
-	@RequestMapping(value = "/boardDetail.do")
+	@RequestMapping(value = "/boardDetail.do", method={RequestMethod.GET, RequestMethod.POST})
 	public String detailPage() throws Exception {
 	return "boardDetail";
 	}

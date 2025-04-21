@@ -19,6 +19,22 @@
 	
 	<script>
 		var sessionUserIdx  = '<c:out value="${sessionScope.loginUser.idx}" default="" />';
+		
+        // 동적 POST 폼 생성 함수
+        function postTo(url, params) {
+            var form = $('<form>').attr({
+                method: 'POST',
+                action: url
+            });
+            $.each(params, function(name, value){
+                $('<input>').attr({
+                    type: 'hidden',
+                    name: name,
+                    value: value
+                }).appendTo(form);
+            });
+            form.appendTo('body').submit();
+        }
 	</script>
 </head>
 <body>
@@ -38,16 +54,16 @@
 	
 	<script>
 		$(function(){
-			// 조회된 게시글 정보
-			var current = {};
-			// URL 파라미터에서 idx 꺼내기
-			var params = new URLSearchParams(window.location.search);
-			var idx = params.get('idx');
+			// JSP EL로 POST form에서 넘어온 idx
+			var idx = '${param.idx}';
 			if (!idx) {
 				alert('게시글의 idx가 없는데?');
-				window.location.href = '${listUrl}';
+				postTo('${listUrl}', {}); // POST로 목록 복귀
 				return;
 			}
+			// 조회된 게시글 정보
+			var current = {};
+			
 			// 상세 API 호출
 			$.ajax({
 				url: '${detailApi}',
@@ -65,13 +81,13 @@
 				},
 				error: function() {
 					alert('상세조회 중 에러 발생');
-					window.location.href = '${listUrl}';
+					postTo('${listUrl}', {});
 				}
 			});
 			
 			// 뒤로가기
 			$('#btnBack').click(function(){
-				window.location.href = '${listUrl}';
+				postTo('${listUrl}', {});
 			});
 			
 			// 수정버튼
@@ -82,7 +98,7 @@
 					return;
 				}
 				// 수정모드로 boardForm 페이지 띄우기 (idx 파라미터 전달)
-				window.location.href = '${boardFormUrl}?idx=' + encodeURIComponent(current.idx);
+				postTo('${boardFormUrl}', { idx: idx });
 			});
 			
 			// 삭제버튼
@@ -94,10 +110,10 @@
 				}
 				if (!confirm('정말 삭제하시겠습니까?')) return;
 				$.ajax({
-					url: '${deleteApi}?idx=' + encodeURIComponent(current.idx),
+					url: '${deleteApi}?idx=' + encodeURIComponent(idx),
 					type: 'POST',
 					contentType: 'application/json',
-					data: JSON.stringify({ idx: current.idx }),
+					data: JSON.stringify({ idx: idx }),
 					success: function(res){
 						if (res.error) {
 							alert(res.error);

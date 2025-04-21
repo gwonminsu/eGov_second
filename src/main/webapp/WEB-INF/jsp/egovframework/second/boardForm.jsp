@@ -7,18 +7,37 @@
 	<meta charset="UTF-8">
 	<title>게시글 작성</title>
 	<script src="<c:url value='/js/jquery-3.6.0.min.js'/>"></script>
-	<!-- 게시글 등록 API URL -->
-	<c:url value="/api/board/create.do" var="createUrl"/>
+	
 	<!-- 목록 페이지 URL -->
 	<c:url value="/boardList.do" var="listUrl"/>
+	<!-- API URL -->
+    <c:url value="/api/board/create.do" var="createApi"/>
+    <c:url value="/api/board/edit.do"   var="editApi"/>
+    <c:url value="/api/board/detail.do" var="detailApi"/>
 	
 	<script>
 		var sessionUserIdx  = '<c:out value="${sessionScope.loginUser.idx}" default="" />';
 		var sessionUserName = '<c:out value="${sessionScope.loginUser.userName}" default="" />';
+		
+        // 동적 POST 폼 생성 함수
+        function postTo(url, params) {
+            var form = $('<form>').attr({
+                method: 'POST',
+                action: url
+            });
+            $.each(params, function(name, value){
+                $('<input>').attr({
+                    type: 'hidden',
+                    name: name,
+                    value: value
+                }).appendTo(form);
+            });
+            form.appendTo('body').submit();
+        }
 	</script>
 </head>
 <body>
-	<h2>게시글 작성</h2>
+	<h2 id="formTitle">게시글 작성</h2>
 	<h3>현재 수정중인 게시판 idx: <span id="idxShow"></span></h3>
 	<label>작성자: 
 		<input type="text" id="userName" readonly />
@@ -33,21 +52,26 @@
 	<button id="btnCancel">취소</button>
 	
 	<script>
-	var params = new URLSearchParams(window.location.search); // 파라미터 가져오기
-	var idx    = params.get('idx');
+	// JSP EL로 POST 폼 파라미터 idx 바로 읽기
+	var idx = '${param.idx}';  
 	var mode   = idx ? 'edit' : 'create';
-	var apiUrl = mode === 'edit' ? '<c:url value="/api/board/edit.do"/>' : '<c:url value="/api/board/create.do"/>';
+	// 모드에 따라 apiUrl 주소 변경
+	var apiUrl = mode === 'edit' ? '${editApi}' : '${createApi}';
 	
     $(function(){
     	if (mode === 'edit') {
-    		$('h2').text('게시글 수정');
+    		$('#formTitle').text('게시글 수정');
     		$('#idxShow').text(idx);
     		// 게시글 상세 정보 가져와서 input에 채워넣기
-    		$.getJSON('<c:url value="/api/board/detail.do"/>', { idx: idx }, function(item) {
+    		$.getJSON('${detailApi}', { idx: idx }, function(item) {
 	   	        $('#title').val(item.title);
 	   	        $('#content').val(item.content);
-    		});
+    		}).fail(function(){
+                alert('수정할 게시글 정보 불러오기 실패');
+                postTo('${listUrl}', {});
+            });
     	}
+    	
     	// 작성자 input에 세션의 사용자 이름 넣기
     	$('#userName').val(sessionUserName);
     	
@@ -60,19 +84,20 @@
     		if (!contentVal.reportValidity()) return;
         	
     		// 검증 통과 시 게시글 등록 api 실행
-    		var data1={userIdx: sessionUserIdx, title: $('#title').val(), content:$('#content').val()}; // 등록 모드 시 데이터
-    		var data2={idx: idx, userIdx: sessionUserIdx, title: $('#title').val(), content:$('#content').val()}; // 수정 모드 시 데이터
+    		var data = {userIdx: sessionUserIdx, title: $('#title').val(), content:$('#content').val()}; // 보낼 데이터
+    		if (mode==='edit') data.idx = idx; // 수정 모드면 idx 추가
+    		
     		$.ajax({
-    			url: apiUrl + '?idx=' + encodeURIComponent(idx),
+    			url: apiUrl + (mode==='edit' ? '?idx='+encodeURIComponent(idx) : ''),
     			type:'POST',
     			contentType:'application/json',
-    			data: mode==='edit' ? JSON.stringify(data2) : JSON.stringify(data1),
+    			data: JSON.stringify(data),
     			success: function(res){
 					if (res.error) {
 						alert(res.error);
 					} else {
 						alert(mode==='edit'?'글 수정 완료':'글 등록 완료');
-						window.location.href = '${listUrl}';
+						postTo('${listUrl}', {});
 		            }
     			},
 				error: function(xhr){
@@ -83,7 +108,7 @@
     	
     	$('#btnCancel').click(function() {
     		// 게시글 목록 페이지 이동
-    		window.location.href = '${listUrl}';
+    		postTo('${listUrl}', {});
     	});
     });
 	</script>

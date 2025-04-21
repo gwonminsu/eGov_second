@@ -24,6 +24,25 @@
 	<script>
 		// 서버에서 렌더링 시점에 loginUser.userName 이 없으면 빈 문자열로
 		var loginUserName = '<c:out value="${sessionScope.loginUser.userName}" default="" />';
+		
+		// 게시글 상세 GET아닌 POST로 진입하기
+		function postTo(url, params) {
+		    // 폼 요소 생성
+		    var form = $('<form>').attr({
+		        method: 'POST',
+		        action: url
+		    });
+		    // hidden input으로 파라미터 삽입
+		    $.each(params, function(name, value) {
+		        $('<input>').attr({
+		            type: 'hidden',
+		            name: name,
+		            value: value
+		        }).appendTo(form);
+		    });
+		    // body에 붙이고 제출
+		    form.appendTo('body').submit();
+		}
 	</script>
 </head>
 <body>
@@ -54,8 +73,8 @@
     <button type="button" id="btnGoBoardForm">글쓰기</button>
     
     <script>
-    	// 페이지 렌더링 시 사용자 리스트 가져오기
-	    $(document).ready(function() {
+	    $(function() {
+	    	// 페이지 렌더링 시 사용자 리스트 가져오기
 	    	console.log('AJAX 호출 URL=', '${boardListUrl}');
 	        $.ajax({
 	            url: '${boardListUrl}',
@@ -66,12 +85,13 @@
 	                var $tbody = $('#boardListTbl').find('tbody');
 	                $tbody.empty();
 	                $.each(data, function(i, item) {
-	                	var detailLink = '${boardDetailUrl}?idx=' + encodeURIComponent(item.idx);
+	                	// void(0)은 클릭 이벤트만 받는다는 뜻
+	                	var titleLink = '<a href="javascript:void(0);" class="link-view" data-idx="' + item.idx + '">' + item.title + '</a>';
 	                    var row = '<tr>' +
 	                              '<td>' + item.idx + '</td>' +
 	                              '<td>' + item.userIdx + '</td>' +
 	                              '<td>' + item.userName + '</td>' +
-	                              '<td><a href="' + detailLink + '">' + item.title + '</a></td>' +
+	                              '<td>' + titleLink + '</td>' +
 	                              '<td>' + item.hit + '</td>' +
 	                              '<td>' + item.createdAt + '</td>' +
 	                              '<td>' + item.updatedAt + '</td>' +
@@ -83,9 +103,7 @@
 	                console.error('AJAX 에러:', error);
 	            }
 	        });
-	    });
-	    
-	    $(function(){
+	        
 	        // 로그인 여부에 따라 버튼 토글
 	        if (loginUserName) {
 				$('#loginMsg').text('현재 로그인 중인 사용자: ' + loginUserName);
@@ -96,26 +114,13 @@
 				$('#btnGoLogin').show();
 				$('#btnLogout').hide();
 	        }
-	    	
+	        
 	    	// 로그인 버튼 핸들러
 	    	$('#btnGoLogin').click(function() {
 	    		// 로그인 페이지 이동
 	    		window.location.href = '${loginUrl}';
 	    	});
-	    	
-	    	// 글쓰기 버튼 핸들러
-	    	$('#btnGoBoardForm').click(function() {
-	    		if (loginUserName) {
-	    			// 세션에 사용자가 있으면 게시글 작성 폼으로
-	    			window.location.href = '${boardFormUrl}';
-	    		} else {
-	    			// 없으면 로그인 페이지로
-	    			alert('글 작성하려면 로그인 하셔야 합니다');
-	    			window.location.href = '${loginUrl}';
-	    		}
-	    		
-	    	});
-	    	
+	        
 	        // 로그아웃
 	        $('#btnLogout').click(function(){
 				$.ajax({
@@ -128,6 +133,24 @@
 						alert('로그아웃 중 오류 발생');
 					}
 				});
+	        });
+	    	
+	    	// 글쓰기 버튼 핸들러
+	    	$('#btnGoBoardForm').click(function() {
+	    		if (loginUserName) {
+	    			// 세션에 사용자가 있으면 게시글 작성 폼으로
+	    			postTo('${boardFormUrl}', {});
+	    		} else {
+	    			// 없으면 로그인 페이지로
+	    			alert('글 작성하려면 로그인 하셔야 합니다');
+	    			window.location.href = '${loginUrl}';
+	    		}
+	    	});
+	    	
+	        // 재목 클릭 -> 상세 페이지로 POST
+	        $('#boardListTbl').on('click', '.link-view', function(){
+	            var idx = $(this).data('idx');
+	            postTo('${boardDetailUrl}', { idx: idx });
 	        });
 	    });
     </script>
