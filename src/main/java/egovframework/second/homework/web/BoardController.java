@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpSession;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,6 +21,7 @@ import org.springmodules.validation.commons.DefaultBeanValidator;
 
 import egovframework.second.homework.service.BoardService;
 import egovframework.second.homework.service.BoardVO;
+import egovframework.second.homework.service.UserVO;
 
 @RestController
 @RequestMapping("/api/board")
@@ -69,31 +71,39 @@ public class BoardController {
     // 게시글 상세
     @GetMapping(value="/detail.do", produces="application/json")
     public BoardVO detail(@RequestParam String idx) throws Exception {
+    	boardService.incrementHit(idx); //조회수 증가
     	BoardVO vo = boardService.getBoard(idx);
     	log.info("게시글 JSON 데이터: {}", vo);
         return vo;
     }
 
     // 게시글 수정
-    @PostMapping(value="/edit.do", produces="application/json")
-    public Map<String,String> edit(@RequestBody BoardVO vo) {
-        try {
-            boardService.modifyBoard(vo);
-            return Collections.singletonMap("status","OK");
-        } catch(Exception e) {
-            return Collections.singletonMap("error", e.getMessage());
+    @PostMapping(value="/edit.do", consumes="application/json", produces="application/json")
+    public Map<String,String> edit(@RequestBody BoardVO vo,
+    		HttpSession session) throws Exception {
+    	// 폼 검증
+        BindingResult bindingResult = new BeanPropertyBindingResult(vo, "boardVO");
+        beanValidator.validate(vo, bindingResult);
+        if (bindingResult.hasErrors()) {
+            String msg = bindingResult.getFieldError().getDefaultMessage();
+            log.warn("게시글 수정 검증 실패: {}", msg);
+            return Collections.singletonMap("error", msg);
         }
+        log.info("게시글 수정 검증 완료: title={}, userIdx={}", vo.getTitle(), vo.getUserIdx());
+		
+    	
+        boardService.modifyBoard(vo);
+        return Collections.singletonMap("status","OK");
     }
 
     // 게시글 삭제
     @PostMapping(value="/delete.do", consumes="application/json", produces="application/json")
-    public Map<String,String> delete(@RequestBody Map<String,String> param) {
-        try {
-            boardService.removeBoard(param.get("idx"));
-            return Collections.singletonMap("status","OK");
-        } catch(Exception e) {
-            return Collections.singletonMap("error", e.getMessage());
-        }
+    public Map<String,String> delete(@RequestBody Map<String,String> param,
+    		HttpSession session) throws Exception {
+        String idx = param.get("idx"); // 게시글 idx
+        log.info("게시글 삭제 요청: ", param);
+        boardService.removeBoard(idx);
+        return Collections.singletonMap("status","OK");
     }
 	
 }

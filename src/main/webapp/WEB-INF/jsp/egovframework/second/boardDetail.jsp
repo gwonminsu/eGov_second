@@ -10,8 +10,14 @@
 	
 	<!-- 게시글 상세 정보 가져오는 api 호출 url -->
 	<c:url value="/api/board/detail.do" var="detailApi"/>
+	<!-- 게시글 삭제 api 호출 url -->
+	<c:url value="/api/board/delete.do" var="deleteApi"/>
 	<!-- 목록 페이지 URL -->
 	<c:url value="/boardList.do" var="listUrl"/>
+	
+	<script>
+		var sessionUserIdx  = '<c:out value="${sessionScope.loginUser.idx}" default="" />';
+	</script>
 </head>
 <body>
 	<h1 id="detailTitle"></h1>
@@ -30,6 +36,8 @@
 	
 	<script>
 		$(function(){
+			// 조회된 게시글 정보
+			var current = {};
 			// URL 파라미터에서 idx 꺼내기
 			var params = new URLSearchParams(window.location.search);
 			var idx = params.get('idx');
@@ -45,6 +53,7 @@
 				data: { idx: idx },
 				dataType: 'json',
 				success: function(item) {
+					current = item;
 					console.log('받아온 데이터=', item);
 					$('#detailTitle').text(item.title);
 					$('#detailUserName').text(item.userName);
@@ -61,6 +70,44 @@
 			// 뒤로가기
 			$('#btnBack').click(function(){
 				window.location.href = '${listUrl}';
+			});
+			
+			// 수정버튼
+			$('#btnEdit').click(function(){
+				var me = sessionUserIdx;
+				if (me !== current.userIdx) {
+					alert('수정 권한이 없습니다');
+					return;
+				}
+				// 수정모드로 boardForm 페이지 띄우기 (idx 파라미터 전달)
+				window.location.href = '${boardFormUrl}?idx=' + encodeURIComponent(current.idx);
+			});
+			
+			// 삭제버튼
+			$('#btnDelete').click(function(){
+				var me = sessionUserIdx;
+ 				if (me !== current.userIdx) {
+					alert('삭제 권한이 없습니다');
+					return;
+				}
+				if (!confirm('정말 삭제하시겠습니까?')) return;
+				$.ajax({
+					url: '${deleteApi}?idx=' + encodeURIComponent(current.idx),
+					type: 'POST',
+					contentType: 'application/json',
+					data: JSON.stringify({ idx: current.idx }),
+					success: function(res){
+						if (res.error) {
+							alert(res.error);
+						} else {
+							alert('게시글 삭제가 완료되었습니다.');
+							window.location.href = '${listUrl}';
+						}
+					},
+					error: function(){
+					alert('삭제 중 오류 발생');
+					}
+				});
 			});
 		});
 	</script>

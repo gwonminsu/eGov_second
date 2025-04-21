@@ -14,6 +14,9 @@ public interface BoardService {
     // 게시글 상세 조회
     BoardVO getBoard(String idx) throws Exception;
     
+    // 게시글 조회수 증가
+    void incrementHit(String idx) throws Exception;
+    
     // 게시글 수정
     void modifyBoard(BoardVO vo) throws Exception;
     

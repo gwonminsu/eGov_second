@@ -36,15 +36,27 @@
     </bean>
     
     <bean id="loginInterceptor" class="egovframework.second.cmmn.web.LoginInterceptor"/>
+    <bean id="permissionInterceptor" class="egovframework.second.cmmn.web.PermissionInterceptor"/>
     <bean class="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping">
         <property name="interceptors">
             <list>
             	<!-- 로그인 인터셉터 -->
-            	<ref bean="loginInterceptor"/>  
+            	<ref bean="loginInterceptor"/>
                 <ref bean="localeChangeInterceptor" />
             </list>
         </property>
     </bean>
+    <!-- 게시글 주인 확인 인터셉터 -->
+	<bean class="org.springframework.web.servlet.handler.MappedInterceptor">
+		<constructor-arg>
+			<list>
+				<value>/api/board/edit.do</value>
+				<value>/api/board/delete.do</value>
+			</list>
+		</constructor-arg>
+		<constructor-arg ref="permissionInterceptor"/>
+	</bean>
+    
     
     <bean id="localeResolver" class="org.springframework.web.servlet.i18n.SessionLocaleResolver" />
     <!-- 쿠키를 이용한 Locale 이용시 <bean id="localeResolver" class="org.springframework.web.servlet.i18n.CookieLocaleResolver"/> -->
