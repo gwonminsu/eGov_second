@@ -9,6 +9,8 @@
 	<script src="<c:url value='/js/jquery-3.6.0.min.js'/>"></script>
 	<!-- 로그인 페이지 URL -->
 	<c:url value="/login.do" var="loginUrl"/>
+	<!-- 회원가입 api 호출 url -->
+	<c:url value="/api/user/register.do" var="registerUrl"/>
 </head>
 <body>
 	<h2>회원가입</h2>
@@ -37,7 +39,7 @@
 		// 검증 통과 시 회원가입 api 실행
 		var data={userId:$('#userId').val(), password:$('#password').val(), userName:$('#userName').val()};
 		$.ajax({
-			url:'<c:url value="/api/user/register.do"/>',
+			url:'${registerUrl}',
 			type:'POST',
 			contentType:'application/json',
 			data:JSON.stringify(data),

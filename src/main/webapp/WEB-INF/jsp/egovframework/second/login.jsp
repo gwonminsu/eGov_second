@@ -7,8 +7,12 @@
 	<meta charset="UTF-8">
 	<title>로그인</title>
 	<script src="<c:url value='/js/jquery-3.6.0.min.js'/>"></script>
+	<!-- 로그인 api 호출 url -->
+	<c:url value="/api/user/login.do" var="loginUrl"/>
 	<!-- 회원가입 페이지 url -->
 	<c:url value="/register.do" var="registerUrl"/>
+	<!-- 목록 페이지 URL -->
+	<c:url value="/boardList.do" var="listUrl"/>
 </head>
 <body>
 	<h2>로그인</h2>
@@ -32,12 +36,12 @@
 		// 검증 통과 시 로그인 api 실행
 		var data={userId:$('#userId').val(), password:$('#password').val()};
 		$.ajax({
-			url:'<c:url value="/api/user/login.do"/>',
+			url:'${loginUrl}',
 			type:'POST',
 			contentType:'application/json',
 			data:JSON.stringify(data),
 			success:function(res){
-		        if(res.user) window.location='<c:url value="/boardList.do"/>';
+		        if(res.user) window.location='${listUrl}';
 		        else alert(res.error);
 			}
 		});

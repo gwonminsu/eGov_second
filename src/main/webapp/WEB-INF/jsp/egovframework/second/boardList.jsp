@@ -12,6 +12,8 @@
 	<c:url value="/api/board/list.do" var="boardListUrl"/>
 	<!-- 로그인 페이지 url -->
 	<c:url value="/login.do" var="loginUrl"/>
+	<!-- 게시글 작성 페이지 url -->
+	<c:url value="/boardForm.do" var="boardFormUrl"/>
 	<!-- 로그아웃 api 호출 url -->
 	<c:url value="/api/user/logout.do" var="logoutUrl" />
 	
@@ -45,6 +47,8 @@
     	</thead>
     	<tbody></tbody>
     </table>
+    
+    <button type="button" id="btnGoBoardForm">글쓰기</button>
     
     <script>
     	// 페이지 렌더링 시 사용자 리스트 가져오기
@@ -95,7 +99,20 @@
 	    		window.location.href = '${loginUrl}';
 	    	});
 	    	
-	        // 3) 로그아웃
+	    	// 글쓰기 버튼 핸들러
+	    	$('#btnGoBoardForm').click(function() {
+	    		if (loginUserName) {
+	    			// 세션에 사용자가 있으면 게시글 작성 폼으로
+	    			window.location.href = '${boardFormUrl}';
+	    		} else {
+	    			// 없으면 로그인 페이지로
+	    			alert('글 작성하려면 로그인 하셔야 합니다');
+	    			window.location.href = '${loginUrl}';
+	    		}
+	    		
+	    	});
+	    	
+	        // 로그아웃
 	        $('#btnLogout').click(function(){
 				$.ajax({
 					url: '${logoutUrl}',

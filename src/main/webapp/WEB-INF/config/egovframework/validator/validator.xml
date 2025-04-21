@@ -14,7 +14,7 @@
 				<arg0 key="title.user.id" />
 			</field>
 			<field property="password" depends="required">
-				<arg0 key="title.user.regUser" />
+				<arg0 key="title.user.password" />
 			</field>
 		</form>
         
@@ -23,7 +23,19 @@
 				<arg0 key="title.user.id" />
 			</field>
 			<field property="password" depends="required">
-				<arg0 key="title.user.regUser" />
+				<arg0 key="title.user.password" />
+			</field>
+		</form>
+		
+		<form name="boardVO">
+			<field property="userIdx" depends="required">
+				<arg0 key="title.board.userIdx" />
+			</field>
+			<field property="title" depends="required">
+				<arg0 key="title.board.title" />
+			</field>
+			<field property="content" depends="required">
+				<arg0 key="title.board.content" />
 			</field>
 		</form>
     </formset>
