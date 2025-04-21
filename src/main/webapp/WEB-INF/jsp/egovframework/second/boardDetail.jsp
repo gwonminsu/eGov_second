@@ -14,14 +14,15 @@
 	<c:url value="/boardList.do" var="listUrl"/>
 </head>
 <body>
-	<h2>게시글 상세</h2>
-	<div>
-		<label>제목: <span id="detailTitle"></span></label><br/>
-		<label>작성자: <span id="detailUserName"></span></label><br/>
-		<label>등록일: <span id="detailCreated"></span></label><br/>
-		<label>조회수: <span id="detailHit"></span></label><br/>
-		<label>내용:<br/><div id="detailContent" style="white-space:pre-wrap;"></div></label><br/>
+	<h1 id="detailTitle"></h1>
+	<div id="detailMeta">
+		등록자: <span id="detailUserName"></span> |
+		등록일 <span id="detailCreated"></span> |
+		조회수 <span id="detailHit"></span>
 	</div>
+	<hr/>
+	<div id="detailContent" style="white-space: pre-wrap; margin: 1em 0;"></div>
+	<hr/>
 	
 	<button id="btnBack">목록으로</button>
 	<button id="btnEdit">수정</button>
