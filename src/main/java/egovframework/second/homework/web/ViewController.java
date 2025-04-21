@@ -42,4 +42,10 @@ public class ViewController {
 		return "boardList";
 	}
 	
+	// 글쓰기 폼 페이지
+	@RequestMapping(value = "/boardForm.do")
+	public String showBoardForm() {
+		return "boardForm";
+	}
+	
 }

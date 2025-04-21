@@ -28,7 +28,7 @@ public class UserController {
 	@Resource(name = "userService")
 	protected UserService userService;
 	
-	// AJAX 호출로 사용자 리스트 가져오기
+	// AJAX 호출로 사용자 리스트 가져오기(테스트 용)
 	@GetMapping(value = "/userList.do", produces = "application/json; charset=UTF-8")
 	public List<UserVO> getUserList() throws Exception {
 	    List<UserVO> list = userService.getUserList();

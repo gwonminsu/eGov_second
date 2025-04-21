@@ -8,8 +8,8 @@
 	<title>테스트 페이지</title>
 	<script src="<c:url value='/js/jquery-3.6.0.min.js'/>"></script>
 	
-	<!-- 사용자 리스트 json 가져오는 api 호출 url -->
-	<c:url value="/api/user/userList.do" var="userListUrl"/>
+	<!-- 게시글 목록 json 가져오는 api 호출 url -->
+	<c:url value="/api/board/list.do" var="boardListUrl"/>
 	<!-- 로그인 페이지 url -->
 	<c:url value="/login.do" var="loginUrl"/>
 	<!-- 로그아웃 api 호출 url -->
@@ -31,14 +31,16 @@
 		<button type="button" id="btnLogout">로그아웃</button>
 	</div>
 	
-    <table id="userListTbl" border="1">
+    <table id="boardListTbl" border="1">
     	<thead>
 	        <tr>
 	            <th>Idx</th>
-	            <th>아이디</th>
-	            <th>비밀번호</th>
-	            <th>이름</th>
+	            <th>작성자 idx</th>
+	            <th>작성자 이름</th>
+	            <th>제목</th>
+	            <th>조회수</th>
 	            <th>등록일</th>
+	            <th>수정일</th>
 	        </tr>
     	</thead>
     	<tbody></tbody>
@@ -47,22 +49,24 @@
     <script>
     	// 페이지 렌더링 시 사용자 리스트 가져오기
 	    $(document).ready(function() {
-	    	console.log('AJAX 호출 URL=', '${userListUrl}');
+	    	console.log('AJAX 호출 URL=', '${boardListUrl}');
 	        $.ajax({
-	            url: '${userListUrl}',
-	            type: 'GET',
+	            url: '${boardListUrl}',
+	            type: 'POST',
 	            dataType: 'json',
 	            success: function(data) {
 	            	console.log('받아온 데이터=', data);
-	                var $tbody = $('#userListTbl').find('tbody');
+	                var $tbody = $('#boardListTbl').find('tbody');
 	                $tbody.empty();
 	                $.each(data, function(i, item) {
 	                    var row = '<tr>' +
 	                              '<td>' + item.idx + '</td>' +
-	                              '<td>' + item.userId + '</td>' +
-	                              '<td>' + item.password + '</td>' +
+	                              '<td>' + item.userIdx + '</td>' +
 	                              '<td>' + item.userName + '</td>' +
+	                              '<td>' + item.title + '</td>' +
+	                              '<td>' + item.hit + '</td>' +
 	                              '<td>' + item.createdAt + '</td>' +
+	                              '<td>' + item.updatedAt + '</td>' +
 	                              '</tr>';
 	                    $tbody.append(row);  
 	                });

@@ -7,7 +7,7 @@
     </select>
     
 	<!-- 아이디로 사용자 조회 -->
-	<select id="selectByUserId" parameterType="String" resultType="userVO">
+	<select id="selectUserByUserId" parameterType="String" resultType="userVO">
 		SELECT idx, user_id AS userId, password, user_name AS userName, created_at
 		FROM "user"
 		WHERE user_id = #{userId}

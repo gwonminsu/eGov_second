@@ -22,7 +22,7 @@ public class UserDAO {
     
     // id로 사용자 조회
     public UserVO selectByUserId(String userId) throws Exception {
-        return sqlSession.selectOne("userDAO.selectByUserId", userId);
+        return sqlSession.selectOne("userDAO.selectUserByUserId", userId);
     }
     
     // 회원 가입
