@@ -14,6 +14,8 @@
 	<c:url value="/api/board/delete.do" var="deleteApi"/>
 	<!-- 목록 페이지 URL -->
 	<c:url value="/boardList.do" var="listUrl"/>
+	<!-- 게시글 작성 페이지 url(수정) -->
+	<c:url value="/boardForm.do" var="boardFormUrl"/>
 	
 	<script>
 		var sessionUserIdx  = '<c:out value="${sessionScope.loginUser.idx}" default="" />';

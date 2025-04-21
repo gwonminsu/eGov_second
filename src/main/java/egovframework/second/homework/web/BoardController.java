@@ -60,10 +60,10 @@ public class BoardController {
         
         try {
             boardService.createBoard(vo);
-            log.info("사용자 " + vo.getUserName() + "의 글(" + vo.getTitle() + ") 등록 완료");
+            log.info("사용자 " + vo.getUserIdx() + "의 글(" + vo.getTitle() + ") 등록 완료");
             return Collections.singletonMap("status","OK");
         } catch(Exception e) {
-        	log.info("사용자 " + vo.getUserName() + "의 글(" + vo.getTitle() + ") 등록 실패");
+        	log.info("사용자 " + vo.getUserIdx() + "의 글(" + vo.getTitle() + ") 등록 실패");
             return Collections.singletonMap("error", e.getMessage());
         }
     }

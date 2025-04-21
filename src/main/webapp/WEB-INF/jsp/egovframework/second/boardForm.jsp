@@ -19,6 +19,7 @@
 </head>
 <body>
 	<h2>게시글 작성</h2>
+	<h3>현재 수정중인 게시판 idx: <span id="idxShow"></span></h3>
 	<label>작성자: 
 		<input type="text" id="userName" readonly />
 	</label><br/>
@@ -32,7 +33,21 @@
 	<button id="btnCancel">취소</button>
 	
 	<script>
+	var params = new URLSearchParams(window.location.search); // 파라미터 가져오기
+	var idx    = params.get('idx');
+	var mode   = idx ? 'edit' : 'create';
+	var apiUrl = mode === 'edit' ? '<c:url value="/api/board/edit.do"/>' : '<c:url value="/api/board/create.do"/>';
+	
     $(function(){
+    	if (mode === 'edit') {
+    		$('h2').text('게시글 수정');
+    		$('#idxShow').text(idx);
+    		// 게시글 상세 정보 가져와서 input에 채워넣기
+    		$.getJSON('<c:url value="/api/board/detail.do"/>', { idx: idx }, function(item) {
+	   	        $('#title').val(item.title);
+	   	        $('#content').val(item.content);
+    		});
+    	}
     	// 작성자 input에 세션의 사용자 이름 넣기
     	$('#userName').val(sessionUserName);
     	
@@ -45,22 +60,23 @@
     		if (!contentVal.reportValidity()) return;
         	
     		// 검증 통과 시 게시글 등록 api 실행
-    		var data={userIdx: sessionUserIdx, title: $('#title').val(), content:$('#content').val()};
+    		var data1={userIdx: sessionUserIdx, title: $('#title').val(), content:$('#content').val()}; // 등록 모드 시 데이터
+    		var data2={idx: idx, userIdx: sessionUserIdx, title: $('#title').val(), content:$('#content').val()}; // 수정 모드 시 데이터
     		$.ajax({
-    			url:'${createUrl}',
+    			url: apiUrl + '?idx=' + encodeURIComponent(idx),
     			type:'POST',
     			contentType:'application/json',
-    			data:JSON.stringify(data),
-    			success:function(res){
+    			data: mode==='edit' ? JSON.stringify(data2) : JSON.stringify(data1),
+    			success: function(res){
 					if (res.error) {
 						alert(res.error);
 					} else {
-						alert('글 등록 완료');
+						alert(mode==='edit'?'글 수정 완료':'글 등록 완료');
 						window.location.href = '${listUrl}';
 		            }
     			},
 				error: function(xhr){
-					alert('글 등록 중 에러 발생');
+					alert('게시글 ' + (mode==='edit'?'수정':'등록') + ' 중 에러 발생');
 				}
     		});
         });
