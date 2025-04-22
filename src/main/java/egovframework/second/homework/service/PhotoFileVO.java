@@ -15,7 +15,7 @@ public class PhotoFileVO {
 	
     private String idx;
     private String boardIdx; // 첨부파일 소속 게시물 idx
-    private Boolean is_thumnail; // 썸네일 여부
+    private Boolean isThumbnail; // 썸네일 여부
     private String fileName; // 첨부파일 이름
     private String fileUuid; // 첨부파일 uuid
     private String filePath; // 첨부파일 주소

@@ -9,7 +9,6 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpSession;
 
 import org.egovframe.rte.fdl.property.EgovPropertyService;
-import org.egovframe.rte.ptl.mvc.tags.ui.pagination.PaginationInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.validation.BeanPropertyBindingResult;
@@ -19,11 +18,14 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 import org.springmodules.validation.commons.DefaultBeanValidator;
 
 import egovframework.second.homework.service.BoardService;
 import egovframework.second.homework.service.BoardVO;
+import egovframework.second.homework.service.PhotoFileService;
 
 @RestController
 @RequestMapping("/api/board")
@@ -33,6 +35,9 @@ public class BoardController {
 
 	@Resource(name = "boardService")
 	protected BoardService boardService;
+	
+    @Resource(name = "photoFileService")
+    private PhotoFileService photoFileService;
 	
     @Resource(name="propertiesService")
     private EgovPropertyService prop;
@@ -67,8 +72,9 @@ public class BoardController {
     }
 
     // 게시글 등록
-    @PostMapping(value="/create.do", consumes="application/json", produces="application/json")
-    public Map<String,String> write(@RequestBody BoardVO vo) {
+    @PostMapping(value="/create.do", consumes="multipart/form-data", produces="application/json")
+    public Map<String,String> write(@RequestPart("board") BoardVO vo,
+									@RequestPart(value="files", required=false) MultipartFile[] files) throws Exception {
     	// JSON 바디로 바인딩된 UserVO 에 대해 BindingResult 생성
         BindingResult bindingResult = new BeanPropertyBindingResult(vo, "boardVO");
         beanValidator.validate(vo, bindingResult); // beanValidator 로 검증 수행
@@ -81,7 +87,9 @@ public class BoardController {
         log.info("게시글 등록 검증 완료: title={}, userIdx={}", vo.getTitle(), vo.getUserIdx());
         
         try {
-            boardService.createBoard(vo);
+            boardService.createBoard(vo); // 게시글 등록
+            log.info("첨부파일이 달릴 게시글 idx: " + vo.getIdx());
+            photoFileService.savePhotoFiles(vo.getIdx(), files); // 사진 첨부 파일 저장
             log.info("INSERT: 사용자 " + vo.getUserIdx() + "의 글(" + vo.getTitle() + ") 등록 완료");
             return Collections.singletonMap("status","OK");
         } catch(Exception e) {

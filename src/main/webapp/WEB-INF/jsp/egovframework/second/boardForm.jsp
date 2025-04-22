@@ -21,16 +21,9 @@
 		
         // 동적 POST 폼 생성 함수
         function postTo(url, params) {
-            var form = $('<form>').attr({
-                method: 'POST',
-                action: url
-            });
+            var form = $('<form>').attr({ method: 'POST', action: url });
             $.each(params, function(name, value){
-                $('<input>').attr({
-                    type: 'hidden',
-                    name: name,
-                    value: value
-                }).appendTo(form);
+                $('<input>').attr({ type: 'hidden', name: name, value: value }).appendTo(form);
             });
             form.appendTo('body').submit();
         }
@@ -48,6 +41,12 @@
 	<label>내용: 
 		<textarea id="content" required maxlength="15"></textarea>
 	</label><br/>
+	
+	<label>첨부파일:
+		<input type="file" id="fileInput" multiple />
+	</label><br/>
+	<ul id="fileList"></ul>
+	
 	<button id="btnSubmit">저장</button>
 	<button id="btnCancel">취소</button>
 	
@@ -75,6 +74,23 @@
     	// 작성자 input에 세션의 사용자 이름 넣기
     	$('#userName').val(sessionUserName);
     	
+        // 첨부파일 배열
+        var filesArr = [];
+        // 파일 선택 시 리스트에 추가
+        $('#fileInput').on('change', function(e){
+            Array.from(e.target.files).forEach(function(file){
+                filesArr.push(file);
+                var li = $('<li>' + file.name + ' <button type="button" class="remove-file">X</button></li>');
+                // 삭제 버튼 클릭 시 배열에서 제거
+                li.find('.remove-file').click(function(){
+                    filesArr = filesArr.filter(function(f){ return f !== file; });
+                    li.remove();
+                });
+                $('#fileList').append(li);
+            });
+            $(this).val(null);
+        });
+    	
         $('#btnSubmit').click(function(){
         	// 폼 검증(하나라도 인풋이 비어있으면 알림)
     		var titleVal = $('#title')[0];
@@ -87,11 +103,21 @@
     		var data = {userIdx: sessionUserIdx, title: $('#title').val(), content:$('#content').val()}; // 보낼 데이터
     		if (mode==='edit') data.idx = idx; // 수정 모드면 idx 추가
     		
+        	// FormData 생성
+        	var formData = new FormData();
+        	formData.append('board', new Blob([JSON.stringify(data)], { type: 'application/json' }));
+        	// 첨부파일들 추가
+        	filesArr.forEach(function(file){
+        		formData.append('files', file);
+        	});
+    		
     		$.ajax({
     			url: apiUrl + (mode==='edit' ? '?idx='+encodeURIComponent(idx) : ''),
     			type:'POST',
     			contentType:'application/json',
-    			data: JSON.stringify(data),
+    			data: formData,
+    			processData: false,
+    			contentType: false,
     			success: function(res){
 					if (res.error) {
 						alert(res.error);

@@ -6,13 +6,14 @@
 	<!-- idx 생성 방식: board 테이블에서 prefix를 뺀 숫자부분의 MAX를 구한다.
 	MAX값이 존재하지 않으면 NULL을 반환하므로 COALESCE로 1부터 시작하게 하고 prefix를 붙임 -->
 	<insert id="insertBoard" parameterType="boardVO">
+		<selectKey keyProperty="idx" order="BEFORE" resultType="String">
+			SELECT 'BOARD-' || (COALESCE(MAX((SUBSTRING(idx FROM 7))::int), 0) + 1)
+			FROM board
+		</selectKey>
 		INSERT INTO board
 			(idx, user_idx, title, content, created_at, updated_at)
 		VALUES
-			(
-				(SELECT 'BOARD-' || (COALESCE(MAX((SUBSTRING(idx FROM 7))::int), 0)+1) FROM board),
-				#{userIdx}, #{title}, #{content}, NOW(), NOW()
-			)
+			(#{idx}, #{userIdx}, #{title}, #{content}, NOW(), NOW())
 	</insert>
 
 	<!-- 전제 게시글 목록 조회 -->

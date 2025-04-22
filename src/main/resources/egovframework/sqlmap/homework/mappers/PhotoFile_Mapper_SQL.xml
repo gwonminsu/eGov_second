@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="photoFileDAO">
+
+	<!-- 사진 첨부 파일 등록 -->
+	<insert id="insertPhotoFile" parameterType="photoFileVO">
+		<selectKey keyProperty="idx,fileUuid" keyColumn="gen_idx,gen_uuid" resultType="map" order="BEFORE">
+			SELECT
+				'PHOTO-' || (COALESCE(MAX((SUBSTRING(idx FROM 7))::int),0)+1) AS gen_idx,
+				'UUID-' || (COALESCE(MAX((SUBSTRING(file_uuid FROM 6))::int),0)+1) AS gen_uuid
+			FROM photoFile
+		</selectKey>
+		
+		INSERT INTO photoFile
+			(idx, board_idx, is_thumbnail, file_name, file_uuid, file_path, file_size, ext, created_at)
+		VALUES
+			(#{idx}, #{boardIdx}, #{isThumbnail}, #{fileName}, #{fileUuid}, #{filePath}, #{fileSize}, #{ext}, NOW())
+	</insert>
+	
+</mapper>
