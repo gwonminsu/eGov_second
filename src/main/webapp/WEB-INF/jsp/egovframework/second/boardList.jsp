@@ -7,6 +7,13 @@
 <head>
 	<meta charset="UTF-8">
 	<title>테스트 페이지</title>
+	<style>
+		.count-red {
+			color: red;
+			font-weight: bold;
+			font-size: 1.2em;
+		}
+	</style>
 	<script src="<c:url value='/js/jquery-3.6.0.min.js'/>"></script>
 	
 	<!-- 게시글 목록 json 가져오는 api 호출 url -->
@@ -34,7 +41,7 @@
 	
 	    const PAGE_SIZE = ${pageSize}; // 한 그룹당 페이지 버튼 개수
 	    const PAGE_UNIT = ${pageUnit}; // 한 페이지당 레코드 수
-	    console.log("pageSize: " + PAGE_SIZE + ", pageUnit: " + PAGE_UNIT);
+	    
 	    const FIRST_IMG_URL = '${firstImgUrl}';
 	    const PREV_IMG_URL  = '${prevImgUrl}';
 	    const NEXT_IMG_URL  = '${nextImgUrl}';
@@ -56,6 +63,7 @@
 		            var totalCount = res.totalCount;
 		            console.log('받아온 데이터=', data, '총건수=', totalCount);
 		            
+		            $('.count-red').text(totalCount);
 		            var $tbody = $('#boardListTbl tbody');
 		            $tbody.empty();
 		            $.each(data, function(i, item) {
@@ -83,15 +91,12 @@
 		function renderPagination(totalCount, currentPage) {
 			var $pg = $('#paginationArea').empty();
 			var totalPages = Math.ceil(totalCount / PAGE_UNIT);
-			console.log("totalPages: " + totalPages);
 			
 			// 현재 묶음 인덱스, 시작/끝 페이지 계산
 			var groupIndex = Math.floor((currentPage - 1) / PAGE_SIZE);
-			console.log("groupIndex: " + groupIndex);
 			var startPage  = groupIndex * PAGE_SIZE + 1;
-			console.log("startPage: " + startPage);
 			var endPage = Math.min(startPage + PAGE_SIZE - 1, totalPages);
-			console.log("endPage: " + endPage);
+
 			
 			// '처음으로' 버튼
 			if (currentPage > 1) {
@@ -158,6 +163,7 @@
 		<button type="button" id="btnLogout">로그아웃</button>
 	</div>
 	
+	<p>전체: <span class="count-red"></span>건</p>
     <table id="boardListTbl" border="1">
     	<thead>
 	        <tr>
