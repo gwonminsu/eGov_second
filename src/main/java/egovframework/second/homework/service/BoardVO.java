@@ -22,4 +22,12 @@ public class BoardVO {
     private Timestamp createdAt; // 등록일
 	private Timestamp updatedAt; // 수정일
 	
+	// 페이지네이션을 위한 필드
+	private int pageIndex = 1; // 현재 페이지 번호
+	private int pageUnit; // 한 페이지에 출력할 레코드 수
+	private int pageSize; // 페이지 리스트 수
+	private int firstIndex; // 조회 시작 위치
+	private int lastIndex; // 조회 종료 위치
+	private int recordCountPerPage; // 페이지당 레코드 건수
+	
 }

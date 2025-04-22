@@ -20,9 +20,14 @@ public class BoardDAO {
 		sqlSession.insert("boardDAO.insertBoard", vo);
 	}
     
-    // 목록 조회
-    public List<BoardVO> selectBoardList() throws Exception {
-        return sqlSession.selectList("boardDAO.selectBoardList");
+    // 전체 게시글 목록 조회
+    public List<BoardVO> selectBoardList(BoardVO vo) throws Exception {
+        return sqlSession.selectList("boardDAO.selectBoardList", vo);
+    }
+    
+    // 전체 게시글 개수 조회
+    public int selectBoardCount(BoardVO vo) {
+        return sqlSession.selectOne("boardDAO.selectBoardCount", vo);
     }
     
     // 상세 조회

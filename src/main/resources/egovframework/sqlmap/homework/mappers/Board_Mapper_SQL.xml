@@ -15,8 +15,8 @@
 			)
 	</insert>
 
-	<!-- 목록 조회 -->
-	<select id="selectBoardList" resultType="boardVO">
+	<!-- 전제 게시글 목록 조회 -->
+	<select id="selectBoardList" parameterType="boardVO" resultType="boardVO">
 		SELECT
 			b.idx,
 			b.user_idx AS userIdx,
@@ -30,6 +30,13 @@
 		JOIN "user" u
 		ON b.user_idx = u.idx
 		ORDER BY b.created_at DESC
+		LIMIT #{recordCountPerPage}
+		OFFSET #{firstIndex}
+	</select>
+	
+	<!-- 전체 게시글 수 조회 -->
+	<select id="selectBoardCount" parameterType="boardVO" resultType="int">
+		SELECT COUNT(*) FROM board
 	</select>
 
 	<!-- 상세 조회 -->

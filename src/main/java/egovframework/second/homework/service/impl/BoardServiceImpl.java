@@ -29,11 +29,17 @@ public class BoardServiceImpl extends EgovAbstractServiceImpl implements BoardSe
 		boardDAO.insertBoard(vo);
 	}
 
-	// 게시글 목록 조회
+	// 전체 게시글 목록 조회
 	@Override
-	public List<BoardVO> getBoardList() throws Exception {
-		return boardDAO.selectBoardList();
+	public List<BoardVO> getBoardList(BoardVO vo) throws Exception {
+		return boardDAO.selectBoardList(vo);
 	}
+	
+	// 전체 게시글 개수 조회
+    @Override
+    public int getBoardListCount(BoardVO vo) throws Exception {
+        return boardDAO.selectBoardCount(vo);
+    }
 
 	// 게시글 상세 조회
 	@Override

@@ -1,12 +1,15 @@
 package egovframework.second.homework.web;
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpSession;
 
+import org.egovframe.rte.fdl.property.EgovPropertyService;
+import org.egovframe.rte.ptl.mvc.tags.ui.pagination.PaginationInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.validation.BeanPropertyBindingResult;
@@ -21,7 +24,6 @@ import org.springmodules.validation.commons.DefaultBeanValidator;
 
 import egovframework.second.homework.service.BoardService;
 import egovframework.second.homework.service.BoardVO;
-import egovframework.second.homework.service.UserVO;
 
 @RestController
 @RequestMapping("/api/board")
@@ -32,16 +34,36 @@ public class BoardController {
 	@Resource(name = "boardService")
 	protected BoardService boardService;
 	
+    @Resource(name="propertiesService")
+    private EgovPropertyService prop;
+	
 	// 전자정부 검증 빈
     @Resource(name = "beanValidator")
     protected DefaultBeanValidator beanValidator;
 	
     // 게시글 목록
     @PostMapping(value="/list.do", produces="application/json")
-    public List<BoardVO> list() throws Exception {
-    	List<BoardVO> boardList = boardService.getBoardList();
-    	log.info("SELECT: 게시글 목록 JSON 데이터: {}", boardList);
-        return boardList;
+    public Map<String,Object> list(@RequestBody BoardVO vo) throws Exception {
+        Map<String,Object> result = new HashMap<>();
+
+        // 전체 건수
+        int totalCount = boardService.getBoardListCount(vo);
+
+        // 페이징 파라미터 세팅
+        int pageIndex = vo.getPageIndex() <= 0 ? 1 : vo.getPageIndex();
+        int pageSize  = vo.getRecordCountPerPage() <= 0
+                        ? prop.getInt("pageUnit") 
+                        : vo.getRecordCountPerPage();
+        int firstIndex = (pageIndex - 1) * pageSize;
+        vo.setFirstIndex(firstIndex);
+        vo.setRecordCountPerPage(pageSize);
+
+        // 리스트 조회
+        List<BoardVO> list = boardService.getBoardList(vo);
+
+        result.put("list", list);
+        result.put("totalCount", totalCount);
+        return result;
     }
 
     // 게시글 등록

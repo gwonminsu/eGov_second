@@ -6,7 +6,7 @@
 		<property name="properties">
 	        <map>
 	        	<entry key="pageUnit" value="10"/>
-	        	<entry key="pageSize" value="10"/>
+	        	<entry key="pageSize" value="5"/>
 	        </map>
 		</property>
 	</bean>

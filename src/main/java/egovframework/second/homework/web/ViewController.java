@@ -1,23 +1,33 @@
 package egovframework.second.homework.web;
 
+import java.util.List;
+
 import javax.annotation.Resource;
 
+import org.egovframe.rte.fdl.property.EgovPropertyService;
+import org.egovframe.rte.ptl.mvc.tags.ui.pagination.PaginationInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
-import egovframework.second.homework.service.UserService;
+import egovframework.second.homework.service.BoardService;
+import egovframework.second.homework.service.BoardVO;
 
 
 @Controller
 public class ViewController {
 	
 	private static final Logger log = LoggerFactory.getLogger(ViewController.class);
+	
+	@Resource(name = "boardService")
+	protected BoardService boardService;
 
-//    @Resource(name = "userService")
-//    protected UserService userService;
+    @Resource(name="propertiesService")
+    private EgovPropertyService prop;
 	
 	// testPage로 가기
 	@RequestMapping(value = "/testList.do")
@@ -39,7 +49,9 @@ public class ViewController {
 	
 	// 게시판 페이지
 	@RequestMapping(value = "/boardList.do")
-	public String boardListPage() throws Exception {
+	public String boardListPage(Model model) throws Exception {
+	    model.addAttribute("pageUnit", prop.getInt("pageUnit"));
+	    model.addAttribute("pageSize", prop.getInt("pageSize"));
 		return "boardList";
 	}
 	
