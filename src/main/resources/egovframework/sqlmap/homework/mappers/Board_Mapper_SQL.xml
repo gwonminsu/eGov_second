@@ -3,14 +3,16 @@
 <mapper namespace="boardDAO">
 
 	<!-- 글 등록 -->
+	<!-- idx 생성 방식: board 테이블에서 prefix를 뺀 숫자부분의 MAX를 구한다.
+	MAX값이 존재하지 않으면 NULL을 반환하므로 COALESCE로 1부터 시작하게 하고 prefix를 붙임 -->
 	<insert id="insertBoard" parameterType="boardVO">
-		<selectKey keyProperty="idx" resultType="String" order="BEFORE">
-			SELECT 'BOARD-' || nextval('board_seq')
-		</selectKey>
 		INSERT INTO board
 			(idx, user_idx, title, content, created_at, updated_at)
 		VALUES
-			(#{idx}, #{userIdx}, #{title}, #{content}, NOW(), NOW())
+			(
+				(SELECT 'BOARD-' || (COALESCE(MAX((SUBSTRING(idx FROM 7))::int), 0)+1) FROM board),
+				#{userIdx}, #{title}, #{content}, NOW(), NOW()
+			)
 	</insert>
 
 	<!-- 목록 조회 -->

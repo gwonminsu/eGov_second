@@ -40,7 +40,7 @@ public class BoardController {
     @PostMapping(value="/list.do", produces="application/json")
     public List<BoardVO> list() throws Exception {
     	List<BoardVO> boardList = boardService.getBoardList();
-    	log.info("게시글 목록 JSON 데이터: {}", boardList);
+    	log.info("SELECT: 게시글 목록 JSON 데이터: {}", boardList);
         return boardList;
     }
 
@@ -60,10 +60,10 @@ public class BoardController {
         
         try {
             boardService.createBoard(vo);
-            log.info("사용자 " + vo.getUserIdx() + "의 글(" + vo.getTitle() + ") 등록 완료");
+            log.info("INSERT: 사용자 " + vo.getUserIdx() + "의 글(" + vo.getTitle() + ") 등록 완료");
             return Collections.singletonMap("status","OK");
         } catch(Exception e) {
-        	log.info("사용자 " + vo.getUserIdx() + "의 글(" + vo.getTitle() + ") 등록 실패");
+        	log.info("INSERT: 사용자 " + vo.getUserIdx() + "의 글(" + vo.getTitle() + ") 등록 실패");
             return Collections.singletonMap("error", e.getMessage());
         }
     }
@@ -73,7 +73,7 @@ public class BoardController {
     public BoardVO detail(@RequestParam String idx) throws Exception {
     	boardService.incrementHit(idx); //조회수 증가
     	BoardVO vo = boardService.getBoard(idx);
-    	log.info("게시글 JSON 데이터: {}", vo);
+    	log.info("SELECT: 게시글 JSON 데이터: {}", vo);
         return vo;
     }
 
@@ -93,6 +93,7 @@ public class BoardController {
 		
     	
         boardService.modifyBoard(vo);
+        log.info("UPDATE: 게시글({}) 수정 완료", vo.getIdx());
         return Collections.singletonMap("status","OK");
     }
 
@@ -101,8 +102,9 @@ public class BoardController {
     public Map<String,String> delete(@RequestBody Map<String,String> param,
     		HttpSession session) throws Exception {
         String idx = param.get("idx"); // 게시글 idx
-        log.info("게시글 삭제 요청: ", param);
+        log.info("게시글 삭제 요청: {}", param);
         boardService.removeBoard(idx);
+        log.info("DELETE: 게시글({}) 삭제 완료", idx);
         return Collections.singletonMap("status","OK");
     }
 	

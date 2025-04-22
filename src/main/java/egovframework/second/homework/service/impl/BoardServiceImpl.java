@@ -51,7 +51,6 @@ public class BoardServiceImpl extends EgovAbstractServiceImpl implements BoardSe
 	@Override
 	public void modifyBoard(BoardVO vo) throws Exception {
 		boardDAO.updateBoard(vo);
-		
 	}
 
 	// 게시글 삭제

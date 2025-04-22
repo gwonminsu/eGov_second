@@ -15,11 +15,11 @@
     
 	<!-- 회원가입 -->
 	<insert id="insertUser" parameterType="userVO">
-		<selectKey keyProperty="idx" resultType="String" order="BEFORE">
-			SELECT 'USER-' || nextval('user_seq')
-		</selectKey>
 		INSERT INTO "user" (idx, user_id, password, user_name, created_at)
-		VALUES (#{idx}, #{userId}, #{password}, #{userName}, NOW())
+		VALUES (
+				(SELECT 'USER-' || (COALESCE(MAX((SUBSTRING(idx FROM 6))::int), 0)+1) FROM "user"),
+				#{userId}, #{password}, #{userName}, NOW()
+			)
 	</insert>
 	
 </mapper>
