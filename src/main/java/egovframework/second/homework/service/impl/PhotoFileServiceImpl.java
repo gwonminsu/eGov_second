@@ -29,13 +29,14 @@ public class PhotoFileServiceImpl extends EgovAbstractServiceImpl implements Pho
 
     // 사진 첨부 파일들 저장
 	@Override
-	public void savePhotoFiles(String boardIdx, MultipartFile[] files) throws Exception {
+	public void savePhotoFiles(String boardIdx, MultipartFile[] files, Integer thumbnailIndex) throws Exception {
         if (files == null) return;
         String baseDir = propertiesService.getString("file.upload.dir");
         File uploadDir = new File(baseDir);
         if (!uploadDir.exists()) uploadDir.mkdirs();
 
-        for (MultipartFile mf : files) {
+        for (int i = 0; i < files.length; i++) {
+        	MultipartFile mf = files[i];
             if (mf.isEmpty()) continue;
             
             // UUID 파일명 생성
@@ -45,7 +46,7 @@ public class PhotoFileServiceImpl extends EgovAbstractServiceImpl implements Pho
 
             PhotoFileVO vo = new PhotoFileVO();
             vo.setBoardIdx(boardIdx);
-            vo.setIsThumbnail(false); // 기본 false
+            vo.setIsThumbnail(i == thumbnailIndex); // 폼 페이지에서 설정한 썸네일 파일 인덱스에 해당하면 true
             vo.setFileName(origName);
             vo.setFilePath(baseDir);
             vo.setFileSize(size);

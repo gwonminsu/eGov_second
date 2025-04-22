@@ -6,6 +6,23 @@
 <head>
 	<meta charset="UTF-8">
 	<title>게시글 작성</title>
+	<style>
+		#content {
+			width: 100%;
+			height: 300px;
+			border: 1px solid #ccc;
+			padding: 5px;
+			overflow-y: auto; /* 세로 스크롤 활성화 */
+			overflow-x: hidden;
+		}
+		#content img {
+			max-width: 30%;
+			height: auto;
+			display: block;
+			margin: 5px 0;
+		}
+	</style>
+	
 	<script src="<c:url value='/js/jquery-3.6.0.min.js'/>"></script>
 	
 	<!-- 목록 페이지 URL -->
@@ -39,11 +56,11 @@
 		<input type="text" id="title" required maxlength="100"/>
 	</label><br/>
 	<label>내용: 
-		<textarea id="content" required maxlength="15"></textarea>
+		<div id="content" contenteditable="true" ></div>
 	</label><br/>
 	
 	<label>첨부파일:
-		<input type="file" id="fileInput" multiple />
+		<input type="file" id="fileInput" multiple accept="image/*" />
 	</label><br/>
 	<ul id="fileList"></ul>
 	
@@ -64,7 +81,7 @@
     		// 게시글 상세 정보 가져와서 input에 채워넣기
     		$.getJSON('${detailApi}', { idx: idx }, function(item) {
 	   	        $('#title').val(item.title);
-	   	        $('#content').val(item.content);
+	   	        $('#content').html(item.content);
     		}).fail(function(){
                 alert('수정할 게시글 정보 불러오기 실패');
                 postTo('${listUrl}', {});
@@ -79,33 +96,76 @@
         // 파일 선택 시 리스트에 추가
         $('#fileInput').on('change', function(e){
             Array.from(e.target.files).forEach(function(file){
-                filesArr.push(file);
-                var li = $('<li>' + file.name + '[' + file.size + 'byte]' + ' <button type="button" class="remove-file">X</button></li>');
+                // 배열에 저장하고, 그 위치를 fileIdx 에 담는다
+                var fileIdx = filesArr.push(file) - 1;
+                var li = $('<li>')
+	                .attr('data-file-idx', fileIdx)
+	                .append('<input type="radio" name="thumbnail" class="thumbnail-radio" data-index="'+fileIdx+'" value="'+fileIdx+'"/> ')
+	                .append(file.name + ' [' + file.size + ' byte] ')
+	                .append('<button type="button" class="remove-file">X</button>');
                 // 삭제 버튼 클릭 시 배열에서 제거
                 li.find('.remove-file').click(function(){
-                    filesArr = filesArr.filter(function(f){ return f !== file; });
-                    li.remove();
+                    // 삭제할 파일의 인덱스 읽어오기
+                    var idxToRemove = li.data('file-idx');
+                	filesArr.splice(idxToRemove, 1); // 배열에서 제거
+                    li.remove(); // 리스트에서도 제거
+                 	// contenteditable div 내에서 해당 이미지 제거
+                    $('#content img[data-file-idx="' + idxToRemove + '"]').remove();
+                    
+                    // 남아있는 나머지 요소들의 인덱스를 재정렬
+                    $('#fileList li').each(function(newIdx){
+                        $(this).attr('data-file-idx', newIdx);
+                        $(this).find('.thumbnail-radio').attr('data-file-idx', newIdx);
+                    });
+                    $('#content img').each(function(newIdx){
+                        $(this).attr('data-file-idx', newIdx);
+                    });
+                    
+                    // 삭제 후에도 라디오 없으면 첫 번째 자동 체크
+                    if (!$('.thumbnail-radio:checked').length) {
+                      $('.thumbnail-radio').first().prop('checked', true);
+                    }
                 });
                 $('#fileList').append(li);
+                
+                // 내용 인풋에 이미지 미리보기
+                var reader = new FileReader();
+                reader.onload = function(ev){
+                	var img = $('<img>').attr('src', ev.target.result).attr('data-file-idx', fileIdx);
+                    $('#content').append(img);
+                };
+                reader.readAsDataURL(file);
             });
+            // 라디오가 하나도 체크 안 돼 있으면 첫 번째 항목 자동 체크
+            if (!$('.thumbnail-radio:checked').length) {
+              $('#fileList .thumbnail-radio').first().prop('checked', true);
+            }
+            
             $(this).val(null);
         });
     	
         $('#btnSubmit').click(function(){
         	// 폼 검증(하나라도 인풋이 비어있으면 알림)
-    		var titleVal = $('#title')[0];
-    		var contentVal = $('#content')[0];
+    		if (!$('#title')[0].reportValidity()) return;
+    		if ($('#content').text().trim()==='') { alert('내용을 입력하세요'); return; }
     		
-    		if (!titleVal.reportValidity()) return;
-    		if (!contentVal.reportValidity()) return;
+			// 에디터의 HTML 가져오기
+			var rawHtml = $('#content').html();
+			// 모든 <img> 태그 제거
+			var cleanedHtml = rawHtml.replace(/<img[^>]*>/g, '');
         	
     		// 검증 통과 시 게시글 등록 api 실행
-    		var data = {userIdx: sessionUserIdx, title: $('#title').val(), content:$('#content').val()}; // 보낼 데이터
+    		var data = {userIdx: sessionUserIdx, title: $('#title').val(), content: cleanedHtml}; // 보낼 데이터
     		if (mode==='edit') data.idx = idx; // 수정 모드면 idx 추가
+    		
+    		// 썸네일로 선택된 파일 인덱스 추출
+    		var thumbIdx = $('input[name=thumbnail]:checked').data('index');
+    		data.thumbnailIndex = thumbIdx!==undefined ? thumbIdx : null;
     		
         	// FormData 생성
         	var formData = new FormData();
         	formData.append('board', new Blob([JSON.stringify(data)], { type: 'application/json' }));
+        	
         	// 첨부파일들 추가
         	filesArr.forEach(function(file){
         		formData.append('files', file);

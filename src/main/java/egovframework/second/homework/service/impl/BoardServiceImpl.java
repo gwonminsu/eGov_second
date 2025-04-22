@@ -32,7 +32,7 @@ public class BoardServiceImpl extends EgovAbstractServiceImpl implements BoardSe
 	@Override
 	public void createBoardWithFiles(BoardVO vo, MultipartFile[] files) throws Exception {
 		boardDAO.insertBoard(vo);
-		photoFileService.savePhotoFiles(vo.getIdx(), files);
+		photoFileService.savePhotoFiles(vo.getIdx(), files, vo.getThumbnailIndex());
 	}
 
 	// 전체 게시글 목록 조회

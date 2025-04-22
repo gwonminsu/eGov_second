@@ -30,4 +30,7 @@ public class BoardVO {
 	private int lastIndex; // 조회 종료 위치
 	private int recordCountPerPage; // 페이지당 레코드 건수
 	
+    // 클라이언트에서 넘겨줄 썸네일 파일 인덱스
+    private Integer thumbnailIndex;
+	
 }
