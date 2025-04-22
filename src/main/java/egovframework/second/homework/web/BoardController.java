@@ -65,6 +65,7 @@ public class BoardController {
 
         // 리스트 조회
         List<BoardVO> list = boardService.getBoardList(vo);
+        log.info("SELECT: 게시글 목록 데이터: {}", list);
 
         result.put("list", list);
         result.put("totalCount", totalCount);
@@ -87,9 +88,7 @@ public class BoardController {
         log.info("게시글 등록 검증 완료: title={}, userIdx={}", vo.getTitle(), vo.getUserIdx());
         
         try {
-            boardService.createBoard(vo); // 게시글 등록
-            log.info("첨부파일이 달릴 게시글 idx: " + vo.getIdx());
-            photoFileService.savePhotoFiles(vo.getIdx(), files); // 사진 첨부 파일 저장
+        	boardService.createBoardWithFiles(vo, files); // 하나의 트랜잭션으로 게시글과 첨부파일 등록
             log.info("INSERT: 사용자 " + vo.getUserIdx() + "의 글(" + vo.getTitle() + ") 등록 완료");
             return Collections.singletonMap("status","OK");
         } catch(Exception e) {

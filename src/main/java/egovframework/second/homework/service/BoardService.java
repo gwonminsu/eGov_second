@@ -2,11 +2,13 @@ package egovframework.second.homework.service;
 
 import java.util.List;
 
+import org.springframework.web.multipart.MultipartFile;
+
 //Service 인터페이스
 public interface BoardService {
-
-	// 게시글 등록
-    void createBoard(BoardVO vo) throws Exception;
+    
+    // 게시글 등록 + 첨부파일 등록
+    void createBoardWithFiles(BoardVO vo, MultipartFile[] files) throws Exception;
     
     // 전체 게시글 리스트 조회
     List<BoardVO> getBoardList(BoardVO vo) throws Exception;

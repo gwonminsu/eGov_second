@@ -8,9 +8,11 @@ import org.egovframe.rte.fdl.cmmn.EgovAbstractServiceImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import egovframework.second.homework.service.BoardService;
 import egovframework.second.homework.service.BoardVO;
+import egovframework.second.homework.service.PhotoFileService;
 
 
 //Service 구현체
@@ -22,11 +24,15 @@ public class BoardServiceImpl extends EgovAbstractServiceImpl implements BoardSe
 	
 	@Resource(name = "boardDAO")
 	private BoardDAO boardDAO;
-
-	// 게시글 등록
+	
+    @Resource(name="photoFileService")
+    private PhotoFileService photoFileService;
+	
+	// 게시글 등록 + 첨부파일 등록(트랜잭션 작업)
 	@Override
-	public void createBoard(BoardVO vo) throws Exception {
+	public void createBoardWithFiles(BoardVO vo, MultipartFile[] files) throws Exception {
 		boardDAO.insertBoard(vo);
+		photoFileService.savePhotoFiles(vo.getIdx(), files);
 	}
 
 	// 전체 게시글 목록 조회

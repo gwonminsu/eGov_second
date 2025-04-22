@@ -80,7 +80,7 @@
         $('#fileInput').on('change', function(e){
             Array.from(e.target.files).forEach(function(file){
                 filesArr.push(file);
-                var li = $('<li>' + file.name + ' <button type="button" class="remove-file">X</button></li>');
+                var li = $('<li>' + file.name + '[' + file.size + 'byte]' + ' <button type="button" class="remove-file">X</button></li>');
                 // 삭제 버튼 클릭 시 배열에서 제거
                 li.find('.remove-file').click(function(){
                     filesArr = filesArr.filter(function(f){ return f !== file; });
