@@ -13,6 +13,38 @@
 			font-weight: bold;
 			font-size: 1.2em;
 		}
+		
+		#gallery {
+			display: flex;
+			flex-wrap: wrap;
+			gap: 1em;
+			justify-content: center;
+			margin: 1em 0;
+		}
+		.gallery-item {
+			flex: 0 0 calc(25% - 1em);
+			box-sizing: border-box;
+			text-align: center;
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+		}
+		.gallery-item img {
+			width: 200px;
+			height: 200px;
+			display: block;
+			border-radius: 4px;
+		}
+		.gallery-item .info {
+			margin-top: .5em;
+			font-size: .9em;
+			color: #555;
+		}
+		.gallery-item .info .title {
+			font-weight: bold;
+			margin-bottom: .3em;
+			display: block;
+		}
 	</style>
 	<script src="<c:url value='/js/jquery-3.6.0.min.js'/>"></script>
 	
@@ -62,23 +94,29 @@
 		            var data = res.list;
 		            var totalCount = res.totalCount;
 		            console.log('받아온 데이터=', data, '총건수=', totalCount);
-		            
 		            $('.count-red').text(totalCount);
-		            var $tbody = $('#boardListTbl tbody');
-		            $tbody.empty();
-		            $.each(data, function(i, item) {
-		                var titleLink = '<a href="javascript:void(0);" class="link-view" data-idx="' + item.idx + '">' + item.title + '</a>';
-		                var row = '<tr>' +
-		                          '<td>' + item.idx + '</td>' +
-		                          '<td>' + item.userIdx + '</td>' +
-		                          '<td>' + item.userName + '</td>' +
-		                          '<td>' + titleLink + '</td>' +
-		                          '<td>' + item.hit + '</td>' +
-		                          '<td>' + item.createdAt + '</td>' +
-		                          '<td>' + item.updatedAt + '</td>' +
-		                          '</tr>';
-		                $tbody.append(row);
-		            });
+		            
+					var uploadBase = '<c:url value="/uploads/"/>';
+					var $gallery = $('#gallery').empty();
+		            
+					data.forEach(function(item){
+						// 게시물의 썸네일 url 가져오기
+					    var thumb = (item.photoFiles && item.photoFiles.length) ? uploadBase + item.photoFiles[0].fileUuid + item.photoFiles[0].ext : '<c:url value="/uploads/images/no-img.jpg"/>';
+
+						var $card = $('<div>').addClass('gallery-item');
+						$('<img>').attr('src', thumb).appendTo($card);
+						var $info = $('<div>').addClass('info').appendTo($card);
+						$('<span>').addClass('title').text(item.title).appendTo($info);
+						$('<span>').text(item.createdAt + ' | 👁 ' + item.hit).appendTo($info);
+						
+						// 클릭 시 상세 페이지로 이동
+						$card.css('cursor','pointer').click(function(){
+							postTo('${boardDetailUrl}', { idx: item.idx });
+						});
+						
+						$gallery.append($card);
+					});
+		            
 		            renderPagination(totalCount, pageIndex);
 		        },
 		        error: function(xhr, status, error) {
@@ -164,7 +202,7 @@
 	</div>
 	
 	<p>전체: <span class="count-red"></span>건</p>
-    <table id="boardListTbl" border="1">
+<!--     <table id="boardListTbl" border="1">
     	<thead>
 	        <tr>
 	            <th>Idx</th>
@@ -177,7 +215,9 @@
 	        </tr>
     	</thead>
     	<tbody></tbody>
-    </table>
+    </table> -->
+    
+    <div id="gallery"></div>
     
     <button type="button" id="btnGoBoardForm">글쓰기</button>
     

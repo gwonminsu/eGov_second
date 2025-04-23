@@ -4,6 +4,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpSession;
@@ -67,6 +68,16 @@ public class BoardController {
         // 리스트 조회
         List<BoardVO> list = boardService.getBoardList(vo);
         log.info("SELECT: 게시글 목록 데이터: {}", list);
+        
+        // 각 게시물에 썸네일 목록 채우기
+        for (BoardVO b : list) {
+			List<PhotoFileVO> files = photoFileService.getFilesByBoard(b.getIdx());
+			// isThumbnail=true 만 필터링
+			List<PhotoFileVO> thumbs = files.stream()
+			                                 .filter(PhotoFileVO::getIsThumbnail)
+			                                 .collect(Collectors.toList());
+			b.setPhotoFiles(thumbs);
+        }
 
         result.put("list", list);
         result.put("totalCount", totalCount);
