@@ -90,7 +90,7 @@
 				// li 에 data-existing-idx 속성 붙여서 구분
 				var li = $('<li>').attr('data-existing-idx', f.idx)
 					.append('<input type="radio" name="thumbnail" data-type="existing" data-index="'+f.idx+'" '+(f.isThumbnail?'checked':'')+'/>&nbsp;')
-					.append(f.fileName+' ')
+					.append(f.fileName + ' [' + f.fileSize + ' byte] ')
 					.append('<button type="button" class="remove-existing">X</button>');
 				$('#fileList').append(li);
 				
@@ -106,7 +106,8 @@
 				});
 				
 				// 내용 영역에도 미리보기
-				var src = '<c:url value="/uploads/"/>' + f.fileUuid + f.ext;
+				var ts = new Date().getTime(); // 캐시 버스트
+				var src = '<c:url value="/uploads/"/>' + f.fileUuid + f.ext + '?t=' + ts;
 				$('#content').append($('<img>').attr({src: src, 'data-existing-idx': f.idx})
 				);
 			});
@@ -198,10 +199,6 @@
     			    existingThumbnailIdx: thumbType==='existing' ? thumbIndex : null
     				}; // 보낼 데이터
     		if (mode==='edit') data.idx = idx; // 수정 모드면 idx 추가
-    		
-    		// 썸네일로 선택된 파일 인덱스 추출
-/*     		var thumbIdx = $('input[name=thumbnail]:checked').data('index');
-    		data.thumbnailIndex = thumbIdx!==undefined ? thumbIdx : null; */
     		
         	// FormData 생성
         	var formData = new FormData();

@@ -100,9 +100,10 @@
 					var $gallery = $('#gallery').empty();
 		            
 					data.forEach(function(item){
+						var ts = new Date().getTime(); // 캐시 버스트
 						// 게시물의 썸네일 url 가져오기
-					    var thumb = (item.photoFiles && item.photoFiles.length) ? uploadBase + item.photoFiles[0].fileUuid + item.photoFiles[0].ext : '<c:url value="/uploads/images/no-img.jpg"/>';
-
+					    var thumb = (item.photoFiles && item.photoFiles.length) ? uploadBase + item.photoFiles[0].fileUuid + item.photoFiles[0].ext + '?t=' + ts : '<c:url value="/uploads/images/no-img.jpg"/>';
+					    
 						var $card = $('<div>').addClass('gallery-item');
 						$('<img>').attr('src', thumb).appendTo($card);
 						var $info = $('<div>').addClass('info').appendTo($card);

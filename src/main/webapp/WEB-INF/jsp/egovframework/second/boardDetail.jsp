@@ -98,8 +98,9 @@
 					// 첨부파일 이미지 렌더링
 	                var $preview = $('#photoPreview').empty();
 	                (item.photoFiles || []).forEach(function(f){
+	                	var ts = new Date().getTime(); // 캐시 버스트(브라우저 이미지 캐싱 방지)
 						// fileUuid + ext 로 실제 경로 생성
-						var src = uploadBase + f.fileUuid + f.ext;
+						var src = uploadBase + f.fileUuid + f.ext + '?t=' + ts;
 						$('<img>').attr('src', src).appendTo($preview);
 	                });
 	                
