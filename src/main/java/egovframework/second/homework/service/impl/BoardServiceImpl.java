@@ -25,6 +25,9 @@ public class BoardServiceImpl extends EgovAbstractServiceImpl implements BoardSe
 	@Resource(name = "boardDAO")
 	private BoardDAO boardDAO;
 	
+	@Resource(name = "photoFileDAO")
+	private PhotoFileDAO photoFileDAO;
+	
     @Resource(name="photoFileService")
     private PhotoFileService photoFileService;
 	
@@ -69,9 +72,15 @@ public class BoardServiceImpl extends EgovAbstractServiceImpl implements BoardSe
             photoFileService.deleteFilesByIdx(removeFileIdxs);
         }
         
-        // 새로 추가할 파일들
+        // 새로 추가할 파일들이 존재하면
         if (files != null && files.length > 0) {
-            photoFileService.savePhotoFiles(vo.getIdx(), files, vo.getThumbnailIndex());
+        	// 새로 추가한 파일 목록에 썸네일 인덱스가 있으면
+        	if (vo.getThumbnailIndex() != null) {
+        		photoFileDAO.resetThumbnailsByBoardIdx(vo.getIdx()); // 기존 파일 목록의 썸네일 플래그 초기화
+        	}
+        	photoFileService.savePhotoFiles(vo.getIdx(), files, vo.getThumbnailIndex());
+        } else if(vo.getThumbnailIndex() != null) { // 새 파일 없이 기존 파일 중에서 썸네일만 변경한 경우
+        	
         }
 	}
 

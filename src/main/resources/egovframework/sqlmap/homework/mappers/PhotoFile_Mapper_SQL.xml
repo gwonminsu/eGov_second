@@ -32,4 +32,11 @@
 		DELETE FROM photoFile WHERE idx = #{idx}
 	</delete>
 	
+	<!-- 게시글에 있는 사진 첨부파일 썸네일 여부 초기화 -->
+	<update id="resetThumbnailsByBoardIdx" parameterType="String">
+		UPDATE photo_file
+		SET is_thumbnail = FALSE
+		WHERE board_idx = #{boardIdx}
+	</update>
+	
 </mapper>
