@@ -1,6 +1,7 @@
 package egovframework.second.homework.service;
 
 import java.sql.Timestamp;
+import java.util.List;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -33,4 +34,5 @@ public class BoardVO {
     // 클라이언트에서 넘겨줄 썸네일 파일 인덱스
     private Integer thumbnailIndex;
 	
+    private List<PhotoFileVO> photoFiles; // 사진 파일 리스트
 }

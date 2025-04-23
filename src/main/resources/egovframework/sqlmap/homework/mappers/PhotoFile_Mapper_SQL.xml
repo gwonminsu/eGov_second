@@ -17,4 +17,9 @@
 			(#{idx}, #{boardIdx}, #{isThumbnail}, #{fileName}, #{fileUuid}, #{filePath}, #{fileSize}, #{ext}, NOW())
 	</insert>
 	
+	<!-- 게시글에 있는 사진 첨부파일 목록 가져오기 -->
+	<select id="selectPhotoFileList" parameterType="String" resultType="photoFileVO">
+		SELECT * FROM photoFile WHERE board_idx = #{boardIdx} ORDER BY created_at DESC
+	</select>
+	
 </mapper>

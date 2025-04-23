@@ -6,6 +6,19 @@
 <head>
 	<meta charset="UTF-8">
 	<title>게시글 상세</title>
+	<style>
+	   #photoPreview img {
+			max-width: 50%;
+			margin: 5px;
+			display: inline-block;
+			vertical-align: middle;
+	   }
+	   
+	   #detailContent {
+			white-space: pre-wrap;
+			margin: 1em 0;
+	   }
+	</style>
 	<script src="<c:url value='/js/jquery-3.6.0.min.js'/>"></script>
 	
 	<!-- 게시글 상세 정보 가져오는 api 호출 url -->
@@ -45,7 +58,8 @@
 		조회수 <span id="detailHit"></span>
 	</div>
 	<hr/>
-	<div id="detailContent" style="white-space: pre-wrap; margin: 1em 0;"></div>
+	<div id="photoPreview"></div>
+	<div id="detailContent"></div>
 	<hr/>
 	
 	<button id="btnBack">목록으로</button>
@@ -64,6 +78,9 @@
 			// 조회된 게시글 정보
 			var current = {};
 			
+			// 업로드된 파일을 서빙하는 기본 URL
+	        var uploadBase = '<c:url value="/uploads/"/>';
+			
 			// 상세 API 호출
 			$.ajax({
 				url: '${detailApi}',
@@ -77,6 +94,15 @@
 					$('#detailUserName').text(item.userName);
 					$('#detailCreated').text(item.createdAt);
 					$('#detailHit').text(item.hit);
+					
+					// 첨부파일 이미지 렌더링
+	                var $preview = $('#photoPreview').empty();
+	                (item.photoFiles || []).forEach(function(f){
+						// fileUuid + ext 로 실제 경로 생성
+						var src = uploadBase + f.fileUuid + f.ext;
+						$('<img>').attr('src', src).appendTo($preview);
+	                });
+	                
 					$('#detailContent').text(item.content);
 				},
 				error: function() {

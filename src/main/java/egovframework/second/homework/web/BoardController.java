@@ -26,6 +26,7 @@ import org.springmodules.validation.commons.DefaultBeanValidator;
 import egovframework.second.homework.service.BoardService;
 import egovframework.second.homework.service.BoardVO;
 import egovframework.second.homework.service.PhotoFileService;
+import egovframework.second.homework.service.PhotoFileVO;
 
 @RestController
 @RequestMapping("/api/board")
@@ -101,8 +102,10 @@ public class BoardController {
     @GetMapping(value="/detail.do", produces="application/json")
     public BoardVO detail(@RequestParam String idx) throws Exception {
     	boardService.incrementHit(idx); //조회수 증가
-    	BoardVO vo = boardService.getBoard(idx);
-    	log.info("SELECT: 게시글 JSON 데이터: {}", vo);
+    	BoardVO vo = boardService.getBoard(idx); // 게시물 상세 조회
+    	List<PhotoFileVO> files = photoFileService.getFilesByBoard(idx); // 게시물의 사진 첨부 파일 목록 조회
+    	vo.setPhotoFiles(files);
+    	log.info("SELECT: 게시글 JSON 데이터: {}, files= {}", vo, files);
         return vo;
     }
 

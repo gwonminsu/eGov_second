@@ -63,7 +63,7 @@ public class PhotoFileServiceImpl extends EgovAbstractServiceImpl implements Pho
 	// 게시글에 첨부된 파일 목록들 가져오기
 	@Override
 	public List<PhotoFileVO> getFilesByBoard(String boardIdx) throws Exception {
-		return null;
+		return photoFileDAO.selectPhotoFileList(boardIdx);
 	}
 
 }
