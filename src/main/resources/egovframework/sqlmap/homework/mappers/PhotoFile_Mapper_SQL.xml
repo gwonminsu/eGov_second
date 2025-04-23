@@ -34,9 +34,16 @@
 	
 	<!-- 게시글에 있는 사진 첨부파일 썸네일 여부 초기화 -->
 	<update id="resetThumbnailsByBoardIdx" parameterType="String">
-		UPDATE photo_file
+		UPDATE photoFile
 		SET is_thumbnail = FALSE
 		WHERE board_idx = #{boardIdx}
+	</update>
+	
+	<!-- 파일에 대한 썸네일을 true 업데이트 -->
+	<update id="updateThumbnailFlag" parameterType="String">
+		UPDATE photoFile
+		SET is_thumbnail = TRUE
+		WHERE idx = #{fileIdx}
 	</update>
 	
 </mapper>

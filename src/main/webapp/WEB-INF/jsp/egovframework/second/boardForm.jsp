@@ -89,7 +89,7 @@
 			(item.photoFiles||[]).forEach(function(f){
 				// li 에 data-existing-idx 속성 붙여서 구분
 				var li = $('<li>').attr('data-existing-idx', f.idx)
-					.append('<input type="radio" name="thumbnail" value="'+f.idx+'" '+(f.isThumbnail?'checked':'')+'/>&nbsp;')
+					.append('<input type="radio" name="thumbnail" data-type="existing" data-index="'+f.idx+'" '+(f.isThumbnail?'checked':'')+'/>&nbsp;')
 					.append(f.fileName+' ')
 					.append('<button type="button" class="remove-existing">X</button>');
 				$('#fileList').append(li);
@@ -130,7 +130,7 @@
                 console.log('[추가] filesArr after push:', filesArr);
                 var li = $('<li>')
 	                .attr('data-file-idx', fileIdx)
-	                .append('<input type="radio" name="thumbnail" class="thumbnail-radio" data-index="'+fileIdx+'" value="'+fileIdx+'"/> ')
+	                .append('<input type="radio" name="thumbnail" data-type="new" class="thumbnail-radio" data-index="'+fileIdx+'"/> ')
 	                .append(file.name + ' [' + file.size + ' byte] ')
 	                .append('<button type="button" class="remove-file">X</button>');
                 // 삭제 버튼 클릭 시 배열에서 제거
@@ -184,14 +184,24 @@
 			var rawHtml = $('#content').html();
 			// 모든 <img> 태그 제거
 			var cleanedHtml = rawHtml.replace(/<img[^>]*>/g, '');
+			
+			const $sel = $('input[name=thumbnail]:checked');
+			const thumbType = $sel.data('type'); // "existing" or "new"
+			const thumbIndex  = $sel.data('index'); // 숫자(=file idx)
         	
     		// 검증 통과 시 게시글 등록 api 실행
-    		var data = {userIdx: sessionUserIdx, title: $('#title').val(), content: cleanedHtml}; // 보낼 데이터
+    		var data = {
+    				userIdx: sessionUserIdx,
+    				title: $('#title').val(),
+    				content: cleanedHtml,
+    			    newThumbnailIndex: thumbType==='new' ? thumbIndex : null,
+    			    existingThumbnailIdx: thumbType==='existing' ? thumbIndex : null
+    				}; // 보낼 데이터
     		if (mode==='edit') data.idx = idx; // 수정 모드면 idx 추가
     		
     		// 썸네일로 선택된 파일 인덱스 추출
-    		var thumbIdx = $('input[name=thumbnail]:checked').data('index');
-    		data.thumbnailIndex = thumbIdx!==undefined ? thumbIdx : null;
+/*     		var thumbIdx = $('input[name=thumbnail]:checked').data('index');
+    		data.thumbnailIndex = thumbIdx!==undefined ? thumbIdx : null; */
     		
         	// FormData 생성
         	var formData = new FormData();

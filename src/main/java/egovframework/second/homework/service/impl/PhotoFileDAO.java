@@ -5,12 +5,16 @@ import java.util.List;
 import javax.annotation.Resource;
 
 import org.mybatis.spring.SqlSessionTemplate;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 
 import egovframework.second.homework.service.PhotoFileVO;
 
 @Repository("photoFileDAO")
 public class PhotoFileDAO {
+
+	private static final Logger log = LoggerFactory.getLogger(PhotoFileDAO.class);
 	
     @Resource(name = "sqlSession")
     protected SqlSessionTemplate sqlSession;
@@ -39,5 +43,11 @@ public class PhotoFileDAO {
 	public void resetThumbnailsByBoardIdx(String boardIdx) throws Exception {
 		sqlSession.update("photoFileDAO.resetThumbnailsByBoardIdx", boardIdx);
 	}
+	
+	// 파일의 썸네일 플래그를 true로 변경
+	void updateThumbnailFlag(String fileIdx) throws Exception {
+		sqlSession.update("photoFileDAO.updateThumbnailFlag", fileIdx);
+		log.info("{} 파일을 썸네일로 지정!", fileIdx);
+	};
 
 }

@@ -35,7 +35,7 @@ public class BoardServiceImpl extends EgovAbstractServiceImpl implements BoardSe
 	@Override
 	public void createBoardWithFiles(BoardVO vo, MultipartFile[] files) throws Exception {
 		boardDAO.insertBoard(vo);
-		photoFileService.savePhotoFiles(vo.getIdx(), files, vo.getThumbnailIndex());
+		photoFileService.savePhotoFiles(vo.getIdx(), files, vo.getNewThumbnailIndex());
 	}
 
 	// 전체 게시글 목록 조회
@@ -72,15 +72,22 @@ public class BoardServiceImpl extends EgovAbstractServiceImpl implements BoardSe
             photoFileService.deleteFilesByIdx(removeFileIdxs);
         }
         
-        // 새로 추가할 파일들이 존재하면
+        // 기존 파일에 대한 썸네일 변경만 할 경우
+        if (vo.getExistingThumbnailIdx() != null  && (files == null || files.length == 0)) {
+			// 기존 썸네일 플래그 모두 초기화
+			photoFileDAO.resetThumbnailsByBoardIdx(vo.getIdx());
+			// 선택된 existingThumbnailIdx 만 true 로
+			photoFileDAO.updateThumbnailFlag(vo.getExistingThumbnailIdx());
+			return;
+        }
+
+        // 새 파일이 올라왔을 경우
         if (files != null && files.length > 0) {
-        	// 새로 추가한 파일 목록에 썸네일 인덱스가 있으면
-        	if (vo.getThumbnailIndex() != null) {
-        		photoFileDAO.resetThumbnailsByBoardIdx(vo.getIdx()); // 기존 파일 목록의 썸네일 플래그 초기화
-        	}
-        	photoFileService.savePhotoFiles(vo.getIdx(), files, vo.getThumbnailIndex());
-        } else if(vo.getThumbnailIndex() != null) { // 새 파일 없이 기존 파일 중에서 썸네일만 변경한 경우
-        	
+			// 새 썸네일을 새 파일에서 선택했다면
+			if (vo.getNewThumbnailIndex() != null) {
+				photoFileDAO.resetThumbnailsByBoardIdx(vo.getIdx());
+			}
+			photoFileService.savePhotoFiles(vo.getIdx(), files, vo.getNewThumbnailIndex());
         }
 	}
 

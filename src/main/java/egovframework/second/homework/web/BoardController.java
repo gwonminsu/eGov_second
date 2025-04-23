@@ -135,7 +135,9 @@ public class BoardController {
         }
         log.info("게시글 수정 검증 완료: title={}, userIdx={}", vo.getTitle(), vo.getUserIdx());
         
-        boardService.modifyBoard(vo, files, removeFileIdxs);
+        List<String> param = removeFileIdxs == null ? Collections.emptyList() : removeFileIdxs; // 존재하지않으면 빈 리스트 반환
+        
+        boardService.modifyBoard(vo, files, param);
         log.info("UPDATE: 게시글({}) 수정 완료", vo.getIdx());
         return Collections.singletonMap("status","OK");
     }

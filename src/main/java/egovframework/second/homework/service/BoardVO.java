@@ -33,7 +33,7 @@ public class BoardVO {
 	private int recordCountPerPage; // 페이지당 레코드 건수
 	
     // 클라이언트에서 넘겨줄 썸네일 파일 인덱스
-    private Integer thumbnailIndex;
+    private String thumbnailIndex;
 	
     private List<PhotoFileVO> photoFiles; // 사진 파일 리스트
 }
