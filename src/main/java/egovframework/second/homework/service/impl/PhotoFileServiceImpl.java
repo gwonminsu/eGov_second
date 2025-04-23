@@ -93,4 +93,25 @@ public class PhotoFileServiceImpl extends EgovAbstractServiceImpl implements Pho
 		
 	}
 
+	// 게시물에 소속된 사진 첨부 파일들 일괄 삭제
+	@Override
+	public void deleteAllByBoard(String boardIdx) throws Exception {
+		// DB에서 해당 게시물의 첨부파일 목록 조회
+		List<PhotoFileVO> files = photoFileDAO.selectPhotoFileList(boardIdx);
+		
+        // 물리 파일 삭제
+        for (PhotoFileVO vo : files) {
+            // 저장 경로 + 파일명 (UUID + 확장자)
+            File file = new File(vo.getFilePath(), vo.getFileUuid() + vo.getExt());
+            log.info("게시물({}) 삭제에 의해 삭제되는 첨부파일 이름: {}", boardIdx, vo.getFileName());
+            if (file.exists()) {
+                if (!file.delete()) {
+                    log.warn("첨부파일 물리 삭제 실패: {}", file.getAbsolutePath());
+                }
+            }
+        }
+		
+		photoFileDAO.deleteByBoard(boardIdx);
+	}
+
 }

@@ -94,7 +94,8 @@ public class BoardServiceImpl extends EgovAbstractServiceImpl implements BoardSe
 	// 게시글 삭제
 	@Override
 	public void removeBoard(String idx) throws Exception {
-		boardDAO.deleteBoard(idx);
+		boardDAO.deleteBoard(idx); // 게시글 삭제
+		photoFileService.deleteAllByBoard(idx); // 게시글에 소속된 모든 첨부파일 삭제
 	}
 	 
 }

@@ -39,6 +39,11 @@ public class PhotoFileDAO {
     	sqlSession.delete("photoFileDAO.deleteByIdx", idx);
     }
     
+    // 게시물에 소속된 첨부 파일들 삭제
+    public void deleteByBoard(String boardIdx) {
+        sqlSession.delete("photoFileDAO.deleteByBoard", boardIdx);
+    }
+    
     // 게시글에 있는 사진 첨부파일 썸네일 여부 초기화
 	public void resetThumbnailsByBoardIdx(String boardIdx) throws Exception {
 		sqlSession.update("photoFileDAO.resetThumbnailsByBoardIdx", boardIdx);
