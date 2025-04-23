@@ -61,8 +61,18 @@ public class BoardServiceImpl extends EgovAbstractServiceImpl implements BoardSe
 
 	// 게시글 수정
 	@Override
-	public void modifyBoard(BoardVO vo) throws Exception {
-		boardDAO.updateBoard(vo);
+	public void modifyBoard(BoardVO vo, MultipartFile[] files, List<String> removeFileIdxs) throws Exception {
+		boardDAO.updateBoard(vo); // 게시물 내용 수정
+		
+        // 삭제 요청된 첨부파일들 먼저 삭제
+        if (!removeFileIdxs.isEmpty()) {
+            photoFileService.deleteFilesByIdx(removeFileIdxs);
+        }
+        
+        // 새로 추가할 파일들
+        if (files != null && files.length > 0) {
+            photoFileService.savePhotoFiles(vo.getIdx(), files, vo.getThumbnailIndex());
+        }
 	}
 
 	// 게시글 삭제

@@ -74,6 +74,9 @@
 	// 모드에 따라 apiUrl 주소 변경
 	var apiUrl = mode === 'edit' ? '${editApi}' : '${createApi}';
 	
+    // 삭제할 기존 파일 idx 모아둘 배열
+	var removeFileIdxs = [];
+	
     $(function(){
     	if (mode === 'edit') {
     		$('#formTitle').text('게시글 수정');
@@ -82,6 +85,32 @@
     		$.getJSON('${detailApi}', { idx: idx }, function(item) {
 	   	        $('#title').val(item.title);
 	   	        $('#content').html(item.content);
+	   	        
+			(item.photoFiles||[]).forEach(function(f){
+				// li 에 data-existing-idx 속성 붙여서 구분
+				var li = $('<li>').attr('data-existing-idx', f.idx)
+					.append('<input type="radio" name="thumbnail" value="'+f.idx+'" '+(f.isThumbnail?'checked':'')+'/>&nbsp;')
+					.append(f.fileName+' ')
+					.append('<button type="button" class="remove-existing">X</button>');
+				$('#fileList').append(li);
+				
+				// 삭제 버튼
+				li.find('.remove-existing').click(function(){
+					removeFileIdxs.push(f.idx); // 삭제할 idx 기록
+					console.log('[삭제예약] removeFileIdxs:', removeFileIdxs);
+					li.remove(); // 리스트에서 제거
+					$('#content img[data-existing-idx="'+f.idx+'"]').remove();
+					if(!$('input[name=thumbnail]:checked').length){
+						$('input[name=thumbnail]').first().prop('checked',true);
+					}
+				});
+				
+				// 내용 영역에도 미리보기
+				var src = '<c:url value="/uploads/"/>' + f.fileUuid + f.ext;
+				$('#content').append($('<img>').attr({src: src, 'data-existing-idx': f.idx})
+				);
+			});
+	   	        
     		}).fail(function(){
                 alert('수정할 게시글 정보 불러오기 실패');
                 postTo('${listUrl}', {});
@@ -98,6 +127,7 @@
             Array.from(e.target.files).forEach(function(file){
                 // 배열에 저장하고, 그 위치를 fileIdx 에 담는다
                 var fileIdx = filesArr.push(file) - 1;
+                console.log('[추가] filesArr after push:', filesArr);
                 var li = $('<li>')
 	                .attr('data-file-idx', fileIdx)
 	                .append('<input type="radio" name="thumbnail" class="thumbnail-radio" data-index="'+fileIdx+'" value="'+fileIdx+'"/> ')
@@ -108,6 +138,7 @@
                     // 삭제할 파일의 인덱스 읽어오기
                     var idxToRemove = li.data('file-idx');
                 	filesArr.splice(idxToRemove, 1); // 배열에서 제거
+                	console.log('[삭제] filesArr after splice:', filesArr);
                     li.remove(); // 리스트에서도 제거
                  	// contenteditable div 내에서 해당 이미지 제거
                     $('#content img[data-file-idx="' + idxToRemove + '"]').remove();
@@ -165,6 +196,14 @@
         	// FormData 생성
         	var formData = new FormData();
         	formData.append('board', new Blob([JSON.stringify(data)], { type: 'application/json' }));
+        	
+        	console.log('최종 filesArr:', filesArr);
+        	console.log('최종 removeFileIdxs:', removeFileIdxs);
+        	
+			// 삭제 예약된 기존 파일 idx 들
+			removeFileIdxs.forEach(function(fid){
+				formData.append('removeFileIdxs', fid);
+			});
         	
         	// 첨부파일들 추가
         	filesArr.forEach(function(file){

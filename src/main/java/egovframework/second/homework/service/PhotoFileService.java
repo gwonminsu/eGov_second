@@ -12,4 +12,7 @@ public interface PhotoFileService {
     // 게시글에 첨부된 파일 목록들 가져오기
     List<PhotoFileVO> getFilesByBoard(String boardIdx) throws Exception;
 
+    // 파일 idx로 파일 삭제
+    void deleteFilesByIdx(List<String> fileIdxs) throws Exception;
+    
 }

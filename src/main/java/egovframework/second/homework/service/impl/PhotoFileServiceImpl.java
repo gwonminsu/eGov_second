@@ -53,10 +53,12 @@ public class PhotoFileServiceImpl extends EgovAbstractServiceImpl implements Pho
             vo.setExt(ext);
             // DB에 파일 저장
             photoFileDAO.insertPhotoFile(vo);
+            log.info("INSERT 첨부파일 이름 : {}", vo.getFileName());
             
             // 실제 파일 물리 저장
             File dest = new File(uploadDir, vo.getFileUuid() + ext);
             mf.transferTo(dest);
+            log.info("로컬 저장소에서 파일 저장 완료! : {}", vo.getFileUuid() + vo.getExt());
         }
 	}
 
@@ -64,6 +66,30 @@ public class PhotoFileServiceImpl extends EgovAbstractServiceImpl implements Pho
 	@Override
 	public List<PhotoFileVO> getFilesByBoard(String boardIdx) throws Exception {
 		return photoFileDAO.selectPhotoFileList(boardIdx);
+	}
+
+	// 파일 idx로 파일 삭제
+	@Override
+	public void deleteFilesByIdx(List<String> fileIdxs) throws Exception {
+		for (String idx : fileIdxs) {
+			// DB에서 VO 조회 (to get filePath, fileUuid, ext)
+			PhotoFileVO vo = photoFileDAO.selectByIdx(idx);
+			if (vo == null) continue;
+			
+			// DB 레코드 삭제
+			photoFileDAO.deleteByIdx(idx);
+			log.info("DELETE 첨부파일 이름: {}", vo.getFileName());
+			
+			// 물리 파일 삭제
+			File file = new File(vo.getFilePath(), vo.getFileUuid() + vo.getExt());
+			if (file.exists()) {
+				file.delete();
+				log.info("로컬 저장소에서 파일 삭제 완료! : {}", vo.getFileUuid() + vo.getExt());
+			} else {
+				log.info("로컬 저장소에서 삭제할 파일이 존재하지 않음 : {}", vo.getFileUuid() + vo.getExt());
+			}
+		}
+		
 	}
 
 }

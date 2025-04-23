@@ -24,5 +24,15 @@ public class PhotoFileDAO {
     public List<PhotoFileVO> selectPhotoFileList(String boardIdx) throws Exception {
         return sqlSession.selectList("photoFileDAO.selectPhotoFileList", boardIdx);
     }
+    
+    // 단일 파일 조회
+    public PhotoFileVO selectByIdx(String idx) throws Exception {
+    	return sqlSession.selectOne("photoFileDAO.selectByIdx", idx);
+    }
+    
+    // 파일 idx로 파일 삭제
+    public void deleteByIdx(String idx) throws Exception {
+    	sqlSession.delete("photoFileDAO.deleteByIdx", idx);
+    }
 
 }

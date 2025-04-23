@@ -22,4 +22,14 @@
 		SELECT * FROM photoFile WHERE board_idx = #{boardIdx} ORDER BY created_at DESC
 	</select>
 	
+	<!-- idx로 단일 첨부파일 조회 -->
+	<select id="selectByIdx" parameterType="String" resultType="photoFileVO">
+		SELECT * FROM photoFile WHERE idx = #{idx}
+	</select>
+	
+	<!-- 파일 idx로 파일 삭제 -->
+	<delete id="deleteByIdx" parameterType="String">
+		DELETE FROM photoFile WHERE idx = #{idx}
+	</delete>
+	
 </mapper>

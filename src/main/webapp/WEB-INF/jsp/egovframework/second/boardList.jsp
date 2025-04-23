@@ -202,20 +202,6 @@
 	</div>
 	
 	<p>전체: <span class="count-red"></span>건</p>
-<!--     <table id="boardListTbl" border="1">
-    	<thead>
-	        <tr>
-	            <th>Idx</th>
-	            <th>작성자 idx</th>
-	            <th>작성자 이름</th>
-	            <th>제목</th>
-	            <th>조회수</th>
-	            <th>등록일</th>
-	            <th>수정일</th>
-	        </tr>
-    	</thead>
-    	<tbody></tbody>
-    </table> -->
     
     <div id="gallery"></div>
     

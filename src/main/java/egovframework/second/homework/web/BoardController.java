@@ -121,9 +121,10 @@ public class BoardController {
     }
 
     // 게시글 수정
-    @PostMapping(value="/edit.do", consumes="application/json", produces="application/json")
-    public Map<String,String> edit(@RequestBody BoardVO vo,
-    		HttpSession session) throws Exception {
+    @PostMapping(value="/edit.do", consumes="multipart/form-data", produces="application/json")
+    public Map<String,String> edit(@RequestPart("board") BoardVO vo,
+    		@RequestPart(value="files", required=false) MultipartFile[] files,
+    		@RequestParam(value = "removeFileIdxs", required = false) List<String> removeFileIdxs) throws Exception {
     	// 폼 검증
         BindingResult bindingResult = new BeanPropertyBindingResult(vo, "boardVO");
         beanValidator.validate(vo, bindingResult);
@@ -133,9 +134,8 @@ public class BoardController {
             return Collections.singletonMap("error", msg);
         }
         log.info("게시글 수정 검증 완료: title={}, userIdx={}", vo.getTitle(), vo.getUserIdx());
-		
-    	
-        boardService.modifyBoard(vo);
+        
+        boardService.modifyBoard(vo, files, removeFileIdxs);
         log.info("UPDATE: 게시글({}) 수정 완료", vo.getIdx());
         return Collections.singletonMap("status","OK");
     }

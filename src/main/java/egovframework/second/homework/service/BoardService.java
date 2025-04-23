@@ -22,8 +22,8 @@ public interface BoardService {
     // 게시글 조회수 증가
     void incrementHit(String idx) throws Exception;
     
-    // 게시글 수정
-    void modifyBoard(BoardVO vo) throws Exception;
+    // 게시글 수정 + 첨부파일 등록/삭제
+    void modifyBoard(BoardVO vo, MultipartFile[] files, List<String> removeFileIdxs) throws Exception;
     
     // 게시글 삭제
     void removeBoard(String idx) throws Exception;
