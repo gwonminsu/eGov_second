@@ -10,17 +10,11 @@ public interface BoardService {
     // 게시글 등록 + 첨부파일 등록
     void createBoardWithFiles(BoardVO vo, MultipartFile[] files) throws Exception;
     
-    // 전체 게시글 리스트 조회
-    List<BoardVO> getBoardList(BoardVO vo) throws Exception;
+    // 전체/검색된 게시글 리스트 조회
+    List<BoardVO> getBoardList(BoardVO vo, String searchType, String searchKeyword) throws Exception;
     
-    // 전체 게시글 개수 조회
-    int getBoardListCount(BoardVO vo) throws Exception;
-    
-    // 검색된 게시글 리스트 조회
-    List<BoardVO> getSearchBoardList(BoardVO vo, String searchType, String searchKeyword) throws Exception;
-    
-    // 검색된 게시글 개수 조회
-    int getSearchBoardCount(BoardVO vo, String searchType, String searchKeyword) throws Exception;
+    // 전체검색된 게시글 개수 조회
+    int getBoardCount(BoardVO vo, String searchType, String searchKeyword) throws Exception;
     
     // 게시글 상세 조회
     BoardVO getBoard(String idx) throws Exception;

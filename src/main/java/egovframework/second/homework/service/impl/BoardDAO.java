@@ -21,24 +21,14 @@ public class BoardDAO {
 		sqlSession.insert("boardDAO.insertBoard", vo);
 	}
     
-    // 전체 게시글 목록 조회
-    public List<BoardVO> selectBoardList(BoardVO vo) throws Exception {
-        return sqlSession.selectList("boardDAO.selectBoardList", vo);
-    }
-    
-    // 전체 게시글 개수 조회
-    public int selectBoardCount(BoardVO vo) {
-        return sqlSession.selectOne("boardDAO.selectBoardCount", vo);
-    }
-    
-    // 검색한 게시글 목록 조회
-    public List<BoardVO> selectBoardListSearch(Map<String,Object> param) throws Exception {
-    	return sqlSession.selectList("boardDAO.selectBoardListSearch", param);
+    // 전체/검색한 게시글 목록 조회
+    public List<BoardVO> selectBoardList(Map<String,Object> param) throws Exception {
+    	return sqlSession.selectList("boardDAO.selectBoardList", param);
     };
     
-    // 검색한 게시글 개수 조회
-    public int selectBoardCountSearch(Map<String,Object> param) throws Exception {
-    	return sqlSession.selectOne("boardDAO.selectBoardCountSearch", param);
+    // 전체/검색한 게시글 개수 조회
+    public int selectBoardCount(Map<String,Object> param) throws Exception {
+    	return sqlSession.selectOne("boardDAO.selectBoardCount", param);
     };
     
     // 상세 조회

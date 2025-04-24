@@ -64,20 +64,10 @@ public class BoardController {
         vo.setPageIndex(pageIndex);
         vo.setRecordCountPerPage(recordCountPerPage);
         vo.setFirstIndex((pageIndex - 1) * recordCountPerPage);
-
         
-        int totalCount; // 전체 건수
-        List<BoardVO> list; // 게시글 리스트
+        int totalCount = boardService.getBoardCount(vo, searchType, searchKeyword); // 전체 건수
+        List<BoardVO> list = boardService.getBoardList(vo, searchType, searchKeyword); // 게시글 리스트
         
-		if (searchType != null && !searchType.isEmpty() && searchKeyword != null && !searchKeyword.isEmpty()) {
-			// 검색
-			list = boardService.getSearchBoardList(vo, searchType, searchKeyword);
-			totalCount = boardService.getSearchBoardCount(vo, searchType, searchKeyword);
-		} else {
-			// 전체
-			list = boardService.getBoardList(vo);
-			totalCount = boardService.getBoardListCount(vo);
-		}
         log.info("SELECT: 게시글 목록 데이터: {}", list);
         
         // 각 게시물에 썸네일 목록 채우기

@@ -39,37 +39,25 @@ public class BoardServiceImpl extends EgovAbstractServiceImpl implements BoardSe
 		boardDAO.insertBoard(vo);
 		photoFileService.savePhotoFiles(vo.getIdx(), files, vo.getNewThumbnailIndex());
 	}
-
-	// 전체 게시글 목록 조회
-	@Override
-	public List<BoardVO> getBoardList(BoardVO vo) throws Exception {
-		return boardDAO.selectBoardList(vo);
-	}
-	
-	// 전체 게시글 개수 조회
-    @Override
-    public int getBoardListCount(BoardVO vo) throws Exception {
-        return boardDAO.selectBoardCount(vo);
-    }
     
     // 검색된 게시글 목록 조회
 	@Override
-	public List<BoardVO> getSearchBoardList(BoardVO vo, String searchType, String searchKeyword) throws Exception {
+	public List<BoardVO> getBoardList(BoardVO vo, String searchType, String searchKeyword) throws Exception {
         Map<String,Object> param = new HashMap<>();
         param.put("boardVO", vo);
         param.put("searchType", searchType);
         param.put("searchKeyword", searchKeyword);
-		return boardDAO.selectBoardListSearch(param);
+		return boardDAO.selectBoardList(param);
 	}
 
 	// 전체 게시글 개수 조회
 	@Override
-	public int getSearchBoardCount(BoardVO vo, String searchType, String searchKeyword) throws Exception {
+	public int getBoardCount(BoardVO vo, String searchType, String searchKeyword) throws Exception {
         Map<String,Object> param = new HashMap<>();
         param.put("boardVO", vo);
         param.put("searchType", searchType);
         param.put("searchKeyword", searchKeyword);
-		return boardDAO.selectBoardCountSearch(param);
+		return boardDAO.selectBoardCount(param);
 	}
 
 	// 게시글 상세 조회
