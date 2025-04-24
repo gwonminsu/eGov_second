@@ -33,18 +33,15 @@
 	<script>
 		var sessionUserIdx  = '<c:out value="${sessionScope.loginUser.idx}" default="" />';
 		
+	    // 검색 변수(파라미터에서 값 받아와서 검색 상태 유지)
+		var currentSearchType = '<c:out value="${param.searchType}" default="title"/>';
+		var currentSearchKeyword = '<c:out value="${param.searchKeyword}" default=""/>';
+		
         // 동적 POST 폼 생성 함수
         function postTo(url, params) {
-            var form = $('<form>').attr({
-                method: 'POST',
-                action: url
-            });
-            $.each(params, function(name, value){
-                $('<input>').attr({
-                    type: 'hidden',
-                    name: name,
-                    value: value
-                }).appendTo(form);
+            var form = $('<form>').attr({ method: 'POST', action: url });
+            $.each(params, function(name, value){ $('<input>').attr({
+            	type: 'hidden', name: name, value: value }).appendTo(form);
             });
             form.appendTo('body').submit();
         }
@@ -72,7 +69,7 @@
 			var idx = '${param.idx}';
 			if (!idx) {
 				alert('게시글의 idx가 없는데?');
-				postTo('${listUrl}', {}); // POST로 목록 복귀
+				postTo('${listUrl}', { searchType: currentSearchType, searchKeyword: currentSearchKeyword }); // POST로 목록 복귀
 				return;
 			}
 			// 조회된 게시글 정보
@@ -108,13 +105,13 @@
 				},
 				error: function() {
 					alert('상세조회 중 에러 발생');
-					postTo('${listUrl}', {});
+					postTo('${listUrl}', { searchType: currentSearchType, searchKeyword: currentSearchKeyword });
 				}
 			});
 			
 			// 뒤로가기
 			$('#btnBack').click(function(){
-				postTo('${listUrl}', {});
+				postTo('${listUrl}', { searchType: currentSearchType, searchKeyword: currentSearchKeyword });
 			});
 			
 			// 수정버튼
@@ -125,7 +122,7 @@
 					return;
 				}
 				// 수정모드로 boardForm 페이지 띄우기 (idx 파라미터 전달)
-				postTo('${boardFormUrl}', { idx: idx });
+				postTo('${boardFormUrl}', { idx: idx, searchType: currentSearchType, searchKeyword: currentSearchKeyword });
 			});
 			
 			// 삭제버튼

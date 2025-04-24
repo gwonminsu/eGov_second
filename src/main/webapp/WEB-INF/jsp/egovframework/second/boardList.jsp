@@ -79,11 +79,13 @@
 	    const LAST_IMG_URL  = '${lastImgUrl}';
 	    
 	    // 검색 변수(파라미터에서 값 받아와서 검색 상태 유지)
-		var currentSearchType = '<c:out value="${param.searchType}" default=""/>';
+		var currentSearchType = '<c:out value="${param.searchType}" default="title"/>';
 		var currentSearchKeyword = '<c:out value="${param.searchKeyword}" default=""/>';
 		
 		// AJAX 로 페이징/리스트를 불러오는 함수
 		function loadBoardList(pageIndex) {
+			$('#searchType').val(currentSearchType);
+			$('#searchKeyword').val(currentSearchKeyword);
 		    const sType = $('#searchType').val();
 		    const sKeyword = $('#searchKeyword').val().trim();
 			
@@ -106,9 +108,9 @@
 		            console.log('받아온 데이터=', data, '총건수=', totalCount);
 		            
 					// 검색 요약 표시
-					if (currentSearchType && currentSearchKeyword.trim()) {
+					if (sType && sKeyword) {
 						var label = currentSearchType === 'userName' ? '작성자' : '제목';
-						$('#searchInfo').text(label + ' : "' + sKeyword + '"로 검색된 결과');
+						$('#searchInfo').text("[" + sKeyword + "]로 검색된 결과(" + label + ")");
 					} else {
 						$('#searchInfo').text('');
 					}
@@ -251,6 +253,8 @@
 			
 			// 검색 버튼
 			$('#btnSearch').click(function(){
+				currentSearchType = $('#searchType').val();
+				currentSearchKeyword = $('#searchKeyword').val().trim();
 				loadBoardList(1);
 			});
 	        
