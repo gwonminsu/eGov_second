@@ -159,7 +159,12 @@
         // $('#fileInput').on('change', function(e){
        	function handleFiles(fileList){
             Array.from(fileList).forEach(function(file){
-                // 배열에 저장하고, 그 위치를 fileIdx 에 담는다
+                var fileType = file.type.split("/")[0]; // 파일의 타입이 "image/jpeg" 형식이라 자르기
+            	if(fileType != "image") {
+            		alert('이미지 파일이 아닙니다.');
+            		return;
+            	}
+            	// 배열에 저장하고, 그 위치를 fileIdx 에 담는다
                 var fileIdx = filesArr.push(file) - 1;
                 console.log('[추가] filesArr after push:', filesArr);
                 var li = $('<li>')
