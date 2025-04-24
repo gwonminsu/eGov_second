@@ -6,7 +6,7 @@
 <html>
 <head>
 	<meta charset="UTF-8">
-	<title>테스트 페이지</title>
+	<title>게시글 목록 페이지</title>
 	<style>
 		.count-red {
 			color: red;
@@ -73,28 +73,46 @@
 	
 	    const PAGE_SIZE = ${pageSize}; // 한 그룹당 페이지 버튼 개수
 	    const PAGE_UNIT = ${pageUnit}; // 한 페이지당 레코드 수
-	    
 	    const FIRST_IMG_URL = '${firstImgUrl}';
 	    const PREV_IMG_URL  = '${prevImgUrl}';
 	    const NEXT_IMG_URL  = '${nextImgUrl}';
 	    const LAST_IMG_URL  = '${lastImgUrl}';
+	    
+	    // 검색 변수(파라미터에서 값 받아와서 검색 상태 유지)
+		var currentSearchType = '<c:out value="${param.searchType}" default=""/>';
+		var currentSearchKeyword = '<c:out value="${param.searchKeyword}" default=""/>';
 		
 		// AJAX 로 페이징/리스트를 불러오는 함수
 		function loadBoardList(pageIndex) {
+		    const sType = $('#searchType').val();
+		    const sKeyword = $('#searchKeyword').val().trim();
+			
+			var req = {
+				pageIndex: pageIndex,
+				recordCountPerPage: PAGE_UNIT,
+				searchType: sType,
+				searchKeyword: sKeyword
+			};
+			
 		    $.ajax({
 		        url: '${boardListUrl}',
 		        method: 'POST',
 		        contentType: 'application/json',
-		        data: JSON.stringify({
-		            pageIndex: pageIndex,
-		            recordCountPerPage: PAGE_UNIT
-		        }),
+		        data: JSON.stringify(req),
 		        dataType: 'json',
 		        success: function(res) {
 		            var data = res.list;
 		            var totalCount = res.totalCount;
 		            console.log('받아온 데이터=', data, '총건수=', totalCount);
-		            $('.count-red').text(totalCount);
+		            
+					// 검색 요약 표시
+					if (currentSearchType && currentSearchKeyword.trim()) {
+						var label = currentSearchType === 'userName' ? '작성자' : '제목';
+						$('#searchInfo').text(label + ' : "' + sKeyword + '"로 검색된 결과');
+					} else {
+						$('#searchInfo').text('');
+					}
+		            $('.count-red').text(totalCount); // 게시물 수 표시
 		            
 					var uploadBase = '<c:url value="/uploads/"/>';
 					var $gallery = $('#gallery').empty();
@@ -112,7 +130,7 @@
 						
 						// 클릭 시 상세 페이지로 이동
 						$card.css('cursor','pointer').click(function(){
-							postTo('${boardDetailUrl}', { idx: item.idx });
+							postTo('${boardDetailUrl}', { idx: item.idx, searchType: currentSearchType, searchKeyword: currentSearchKeyword });
 						});
 						
 						$gallery.append($card);
@@ -202,6 +220,19 @@
 		<button type="button" id="btnLogout">로그아웃</button>
 	</div>
 	
+	<!-- 검색 영역 -->
+	<div id="searchArea" style="margin-bottom:1em;">
+		<label for="searchType">검색조건:</label>
+		<select id="searchType">
+			<option value="userName">작성자</option>
+			<option value="title">제목</option>
+		</select>
+		<label for="searchKeyword">검색어:</label>
+		<input type="text" id="searchKeyword" />
+		<button type="button" id="btnSearch">검색</button>
+	</div>
+
+	<div id="searchInfo"></div>
 	<p>전체: <span class="count-red"></span>건</p>
     
     <div id="gallery"></div>
@@ -213,6 +244,15 @@
     <script>
 	    $(function() {
 	    	loadBoardList(1);
+	    	
+			// 검색 영역 초기값 반영
+			$('#searchType').val(currentSearchType);
+			$('#searchKeyword').val(currentSearchKeyword);
+			
+			// 검색 버튼
+			$('#btnSearch').click(function(){
+				loadBoardList(1);
+			});
 	        
 	        // 로그인 여부에 따라 버튼 토글
 	        if (loginUserName) {
@@ -249,19 +289,14 @@
 	    	$('#btnGoBoardForm').click(function() {
 	    		if (loginUserName) {
 	    			// 세션에 사용자가 있으면 게시글 작성 폼으로
-	    			postTo('${boardFormUrl}', {});
+	    			postTo('${boardFormUrl}', { searchType: currentSearchType, searchKeyword: currentSearchKeyword });
 	    		} else {
 	    			// 없으면 로그인 페이지로
 	    			alert('글 작성하려면 로그인 하셔야 합니다');
 	    			window.location.href = '${loginUrl}';
 	    		}
 	    	});
-	    	
-	        // 재목 클릭 -> 상세 페이지로 POST
-	        $('#boardListTbl').on('click', '.link-view', function(){
-	            var idx = $(this).data('idx');
-	            postTo('${boardDetailUrl}', { idx: idx });
-	        });
+
 	    });
     </script>
 </body>

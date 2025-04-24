@@ -1,6 +1,8 @@
 package egovframework.second.homework.service.impl;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.Resource;
 
@@ -49,6 +51,26 @@ public class BoardServiceImpl extends EgovAbstractServiceImpl implements BoardSe
     public int getBoardListCount(BoardVO vo) throws Exception {
         return boardDAO.selectBoardCount(vo);
     }
+    
+    // 검색된 게시글 목록 조회
+	@Override
+	public List<BoardVO> getSearchBoardList(BoardVO vo, String searchType, String searchKeyword) throws Exception {
+        Map<String,Object> param = new HashMap<>();
+        param.put("boardVO", vo);
+        param.put("searchType", searchType);
+        param.put("searchKeyword", searchKeyword);
+		return boardDAO.selectBoardListSearch(param);
+	}
+
+	// 전체 게시글 개수 조회
+	@Override
+	public int getSearchBoardCount(BoardVO vo, String searchType, String searchKeyword) throws Exception {
+        Map<String,Object> param = new HashMap<>();
+        param.put("boardVO", vo);
+        param.put("searchType", searchType);
+        param.put("searchKeyword", searchKeyword);
+		return boardDAO.selectBoardCountSearch(param);
+	}
 
 	// 게시글 상세 조회
 	@Override

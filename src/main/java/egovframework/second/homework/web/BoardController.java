@@ -50,23 +50,34 @@ public class BoardController {
 	
     // 게시글 목록
     @PostMapping(value="/list.do", produces="application/json")
-    public Map<String,Object> list(@RequestBody BoardVO vo) throws Exception {
-        Map<String,Object> result = new HashMap<>();
+    public Map<String,Object> list(@RequestBody Map<String,Object> req) throws Exception {
+    	// 파라미터 꺼내기
+        int pageIndex = (Integer) req.get("pageIndex") <= 0 ? 1 : (Integer) req.get("pageIndex");
+        int recordCountPerPage = (Integer) req.get("recordCountPerPage");
+        String searchType = (String) req.get("searchType"); // "userName" or "title"
+        String searchKeyword = (String)  req.get("searchKeyword");
+        
+        log.info("현재 넘겨받은 파라미터 값 - pageIndex:{}, recordCountPerPage:{}, searchType:{}, searchKeyword:{}", pageIndex, recordCountPerPage, searchType, searchKeyword);
+        
+        // VO 에 페이징 정보만 세팅
+        BoardVO vo = new BoardVO();
+        vo.setPageIndex(pageIndex);
+        vo.setRecordCountPerPage(recordCountPerPage);
+        vo.setFirstIndex((pageIndex - 1) * recordCountPerPage);
 
-        // 전체 건수
-        int totalCount = boardService.getBoardListCount(vo);
-
-        // 페이징 파라미터 세팅
-        int pageIndex = vo.getPageIndex() <= 0 ? 1 : vo.getPageIndex();
-        int pageSize  = vo.getRecordCountPerPage() <= 0
-                        ? prop.getInt("pageUnit") 
-                        : vo.getRecordCountPerPage();
-        int firstIndex = (pageIndex - 1) * pageSize;
-        vo.setFirstIndex(firstIndex);
-        vo.setRecordCountPerPage(pageSize);
-
-        // 리스트 조회
-        List<BoardVO> list = boardService.getBoardList(vo);
+        
+        int totalCount; // 전체 건수
+        List<BoardVO> list; // 게시글 리스트
+        
+		if (searchType != null && !searchType.isEmpty() && searchKeyword != null && !searchKeyword.isEmpty()) {
+			// 검색
+			list = boardService.getSearchBoardList(vo, searchType, searchKeyword);
+			totalCount = boardService.getSearchBoardCount(vo, searchType, searchKeyword);
+		} else {
+			// 전체
+			list = boardService.getBoardList(vo);
+			totalCount = boardService.getBoardListCount(vo);
+		}
         log.info("SELECT: 게시글 목록 데이터: {}", list);
         
         // 각 게시물에 썸네일 목록 채우기
@@ -78,7 +89,8 @@ public class BoardController {
 			                                 .collect(Collectors.toList());
 			b.setPhotoFiles(thumbs);
         }
-
+        
+        Map<String,Object> result = new HashMap<>();
         result.put("list", list);
         result.put("totalCount", totalCount);
         return result;
