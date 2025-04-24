@@ -21,6 +21,20 @@
 			display: block;
 			margin: 5px 0;
 		}
+		
+		#dropZone {
+			width:100%;
+			padding:1em;
+			border:2px dashed #ccc;
+			text-align:center; color:#888;
+			margin-bottom:1em;
+		}
+		#dropZone.dragover {
+			border-color: #66afe9;
+			background: #f0f8ff;
+			color: #333;
+		}
+
 	</style>
 	
 	<script src="<c:url value='/js/jquery-3.6.0.min.js'/>"></script>
@@ -62,6 +76,7 @@
 	<label>첨부파일:
 		<input type="file" id="fileInput" multiple accept="image/*" />
 	</label><br/>
+	<div id="dropZone">여기에 파일을 드래그 앤 드롭 해 주세요</div>
 	<ul id="fileList"></ul>
 	
 	<button id="btnSubmit">저장</button>
@@ -123,9 +138,10 @@
     	
         // 첨부파일 배열
         var filesArr = [];
-        // 파일 선택 시 리스트에 추가
-        $('#fileInput').on('change', function(e){
-            Array.from(e.target.files).forEach(function(file){
+        // 파일 선택 시 리스트에 추가하는 함수
+        // $('#fileInput').on('change', function(e){
+       	function handleFiles(fileList){
+            Array.from(fileList).forEach(function(file){
                 // 배열에 저장하고, 그 위치를 fileIdx 에 담는다
                 var fileIdx = filesArr.push(file) - 1;
                 console.log('[추가] filesArr after push:', filesArr);
@@ -174,7 +190,29 @@
             }
             
             $(this).val(null);
-        });
+        };
+        
+        // 파일 선택 버튼으로 파일 추가
+		$('#fileInput').on('change', function(e){
+			handleFiles(e.target.files);
+			$(this).val(null);
+		});
+		// 드래그 앤 드롭으로 파일 추가
+		var $dz = $('#dropZone');
+		$dz.on('dragover', function(e){
+			e.preventDefault();
+			e.originalEvent.dataTransfer.dropEffect = 'copy';
+			$dz.addClass('dragover'); // 스타일 변경하는 클래스 추가
+		});
+		$dz.on('dragleave dragend', function(e){
+			e.preventDefault();
+			$dz.removeClass('dragover'); // 스타일 변경하는 클래스 제거
+		});
+		$dz.on('drop', function(e){
+			e.preventDefault();
+			$dz.removeClass('dragover');
+			handleFiles(e.originalEvent.dataTransfer.files);
+		});
     	
         $('#btnSubmit').click(function(){
         	// 폼 검증(하나라도 인풋이 비어있으면 알림)

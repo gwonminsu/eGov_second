@@ -52,7 +52,8 @@ public class PhotoFileDAO {
 	// 파일의 썸네일 플래그를 true로 변경
 	void updateThumbnailFlag(String fileIdx) throws Exception {
 		sqlSession.update("photoFileDAO.updateThumbnailFlag", fileIdx);
-		log.info("{} 파일을 썸네일로 지정!", fileIdx);
+		PhotoFileVO vo = sqlSession.selectOne("photoFileDAO.selectByIdx", fileIdx); // 로그 용도 vo
+		log.info("기존 파일 중 {} 파일을 썸네일로 지정!", vo.getFileName());
 	};
 
 }

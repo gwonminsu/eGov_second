@@ -47,6 +47,7 @@ public class PhotoFileServiceImpl extends EgovAbstractServiceImpl implements Pho
             PhotoFileVO vo = new PhotoFileVO();
             vo.setBoardIdx(boardIdx);
             boolean isThumb = (thumbnailIndex != null && i == thumbnailIndex);
+            if(isThumb) log.info("신규 파일 중 {} 파일을 썸네일로 지정!", origName);
             vo.setIsThumbnail(isThumb); // 폼 페이지에서 설정한 썸네일 파일 인덱스에 해당하면 true
             vo.setFileName(origName);
             vo.setFilePath(baseDir);
