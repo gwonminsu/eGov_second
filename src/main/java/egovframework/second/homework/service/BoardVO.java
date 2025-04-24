@@ -1,7 +1,6 @@
 package egovframework.second.homework.service;
 
 import java.sql.Timestamp;
-import java.util.ArrayList;
 import java.util.List;
 
 import lombok.Getter;
@@ -33,7 +32,8 @@ public class BoardVO {
 	private int recordCountPerPage; // 페이지당 레코드 건수
 	
     // 클라이언트에서 넘겨줄 썸네일 파일 인덱스
-    private String thumbnailIndex;
+    private Integer newThumbnailIndex; // 새로운 파일목록에서는 인덱스를 받음
+    private String  existingThumbnailIdx; // 기존 파일 목록에는 첨부 파일 PK(idx)
 	
     private List<PhotoFileVO> photoFiles; // 사진 파일 리스트
 }

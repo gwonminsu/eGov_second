@@ -83,11 +83,16 @@ public class BoardServiceImpl extends EgovAbstractServiceImpl implements BoardSe
 
         // 새 파일이 올라왔을 경우
         if (files != null && files.length > 0) {
+        	photoFileDAO.resetThumbnailsByBoardIdx(vo.getIdx());
+        	// 새로운 사진 저장하고 썸네일도 지정하고
+        	photoFileService.savePhotoFiles(vo.getIdx(), files, vo.getNewThumbnailIndex());	// 새로운 사진의 썸네일 인덱스 없으면 썸네일 딱히 지정안함
+        	
 			// 새 썸네일을 새 파일에서 선택했다면
 			if (vo.getNewThumbnailIndex() != null) {
-				photoFileDAO.resetThumbnailsByBoardIdx(vo.getIdx());
+				return;
 			}
-			photoFileService.savePhotoFiles(vo.getIdx(), files, vo.getNewThumbnailIndex());
+			
+			photoFileDAO.updateThumbnailFlag(vo.getExistingThumbnailIdx());
         }
 	}
 
