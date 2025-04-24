@@ -8,6 +8,12 @@
 	<meta charset="UTF-8">
 	<title>게시글 목록 페이지</title>
 	<style>
+		.disabled {
+			opacity:0.3;
+			cursor:default;
+			pointer-events:none;
+		}
+	
 		.count-red {
 			color: red;
 			font-weight: bold;
@@ -118,7 +124,7 @@
 					}
 		            $('.count-red').text(totalCount); // 게시물 수 표시
 		            
-					var uploadBase = '<c:url value="/uploads/"/>';
+					var uploadBase = '${pageContext.request.contextPath}/uploads/';
 					var $gallery = $('#gallery').empty();
 		            
 					data.forEach(function(item){
@@ -126,10 +132,11 @@
 						// 게시물의 썸네일 url 가져오기
 					    var thumb = (item.photoFiles && item.photoFiles.length) ? uploadBase + item.photoFiles[0].fileUuid + item.photoFiles[0].ext + '?t=' + ts : '<c:url value="/uploads/images/no-img.jpg"/>';
 					    
+					    console.log(item);
 						var $card = $('<div>').addClass('gallery-item');
 						$('<img>').attr('src', thumb).appendTo($card);
 						var $info = $('<div>').addClass('info').appendTo($card);
-						$('<span>').addClass('title').text(item.title).appendTo($info);
+						$('<span>').addClass('title').text(item.title + "[작성자: " + item.userName + "]").appendTo($info);
 						$('<span>').text(item.createdAt.split(' ')[0] + ' | 👁 ' + item.hit).appendTo($info);
 						// 날짜는 공백 뒤를 잘라버림
 						
@@ -164,14 +171,14 @@
 			if (currentPage > 1) {
 				$pg.append('<a href="#" onclick="loadBoardList(1);return false;">' + '<img src="' + FIRST_IMG_URL + '" border="0"/></a>&#160;');
 			} else {
-				$pg.append('<img src="' + FIRST_IMG_URL + '" border="0" style="opacity:0.3;cursor:default;pointer-events:none;"/></a>&#160;');
+				$pg.append('<img src="' + FIRST_IMG_URL + '" border="0" class="disabled"/></a>&#160;');
 			}
 			
 			// '이전 10페이지' 버튼
 			if (startPage > 1) {
 			    $pg.append('<a href="#" onclick="loadBoardList(' + (startPage - 1) + ');return false;">' + '<img src="' + PREV_IMG_URL + '" border="0"/></a>&#160;');
 			} else {
-				$pg.append('<img src="' + PREV_IMG_URL + '" border="0" style="opacity:0.3;cursor:default;pointer-events:none;"/></a>&#160;');
+				$pg.append('<img src="' + PREV_IMG_URL + '" border="0" class="disabled"/></a>&#160;');
 			}
 			
 			// 개별 페이지 번호 링크
@@ -191,14 +198,14 @@
 			if (endPage < totalPages) {
 			    $pg.append('<a href="#" onclick="loadBoardList(' + (endPage + 1) + ');return false;">' + '<img src="' + NEXT_IMG_URL + '" border="0"/></a>&#160;');
 			} else {
-				$pg.append('<img src="' + NEXT_IMG_URL + '" border="0" style="opacity:0.3;cursor:default;pointer-events:none;"/></a>&#160;');
+				$pg.append('<img src="' + NEXT_IMG_URL + '" border="0" class="disabled"/></a>&#160;');
 			}
 			
 			// '마지막으로' 버튼
 			if (currentPage < totalPages) {
 			    $pg.append('<a href="#" onclick="loadBoardList(' + totalPages + ');return false;">' + '<img src="' + LAST_IMG_URL + '" border="0"/></a>&#160;');
 			} else {
-				$pg.append('<img src="' + LAST_IMG_URL + '" border="0" style="opacity:0.3;cursor:default;pointer-events:none;"/></a>&#160;');
+				$pg.append('<img src="' + LAST_IMG_URL + '" border="0" class="disabled"/></a>&#160;');
 			}
 		}
 		
