@@ -90,7 +90,7 @@
 					console.log('받아온 데이터=', item);
 					$('#detailTitle').text(item.title);
 					$('#detailUserName').text(item.userName);
-					$('#detailCreated').text(item.createdAt);
+					$('#detailCreated').text(item.createdAt.split(' ')[0]);
 					$('#detailHit').text(item.hit);
 					
 					// 첨부파일 이미지 렌더링

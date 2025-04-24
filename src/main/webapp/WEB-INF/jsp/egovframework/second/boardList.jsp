@@ -130,7 +130,8 @@
 						$('<img>').attr('src', thumb).appendTo($card);
 						var $info = $('<div>').addClass('info').appendTo($card);
 						$('<span>').addClass('title').text(item.title).appendTo($info);
-						$('<span>').text(item.createdAt + ' | 👁 ' + item.hit).appendTo($info);
+						$('<span>').text(item.createdAt.split(' ')[0] + ' | 👁 ' + item.hit).appendTo($info);
+						// 날짜는 공백 뒤를 잘라버림
 						
 						// 클릭 시 상세 페이지로 이동
 						$card.css('cursor','pointer').click(function(){

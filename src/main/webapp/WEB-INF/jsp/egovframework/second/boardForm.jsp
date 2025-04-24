@@ -63,6 +63,18 @@
             });
             form.appendTo('body').submit();
         }
+        
+		// 바이트 수를 읽기 편한 문자열로 변환
+		function formatBytes(bytes) {
+			if (bytes === 0) return '0 Bytes';
+			const k = 1024;
+			const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
+			// 지수 계산
+			const i = Math.floor(Math.log(bytes) / Math.log(k));
+			// 해당 단위로 나눈 값
+			const value = bytes / Math.pow(k, i);
+			return value.toFixed(2) + ' ' + sizes[i];
+		}
 	</script>
 </head>
 <body>
@@ -110,7 +122,7 @@
 				// li 에 data-existing-idx 속성 붙여서 구분
 				var li = $('<li>').attr('data-existing-idx', f.idx)
 					.append('<input type="radio" name="thumbnail" data-type="existing" data-index="'+f.idx+'" '+(f.isThumbnail?'checked':'')+'/>&nbsp;')
-					.append(f.fileName + ' [' + f.fileSize + ' byte] ')
+					.append(f.fileName + ' [' + formatBytes(f.fileSize) + '] ')
 					.append('<button type="button" class="remove-existing">X</button>');
 				$('#fileList').append(li);
 				
@@ -153,7 +165,7 @@
                 var li = $('<li>')
 	                .attr('data-file-idx', fileIdx)
 	                .append('<input type="radio" name="thumbnail" data-type="new" class="thumbnail-radio" data-index="'+fileIdx+'"/> ')
-	                .append(file.name + ' [' + file.size + ' byte] ')
+	                .append(file.name + ' [' + formatBytes(file.size) + '] ')
 	                .append('<button type="button" class="remove-file">X</button>');
                 // 삭제 버튼 클릭 시 배열에서 제거
                 li.find('.remove-file').click(function(){
