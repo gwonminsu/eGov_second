@@ -81,16 +81,18 @@
 	    // 검색 변수(파라미터에서 값 받아와서 검색 상태 유지)
 		var currentSearchType = '<c:out value="${param.searchType}" default="title"/>';
 		var currentSearchKeyword = '<c:out value="${param.searchKeyword}" default=""/>';
+		var currentPageIndex = parseInt('<c:out value="${param.pageIndex}" default="1"/>');
 		
 		// AJAX 로 페이징/리스트를 불러오는 함수
 		function loadBoardList(pageIndex) {
+			currentPageIndex = pageIndex;
 			$('#searchType').val(currentSearchType);
 			$('#searchKeyword').val(currentSearchKeyword);
 		    const sType = $('#searchType').val();
 		    const sKeyword = $('#searchKeyword').val().trim();
 			
 			var req = {
-				pageIndex: pageIndex,
+				pageIndex: currentPageIndex,
 				recordCountPerPage: PAGE_UNIT,
 				searchType: sType,
 				searchKeyword: sKeyword
@@ -132,7 +134,7 @@
 						
 						// 클릭 시 상세 페이지로 이동
 						$card.css('cursor','pointer').click(function(){
-							postTo('${boardDetailUrl}', { idx: item.idx, searchType: currentSearchType, searchKeyword: currentSearchKeyword });
+							postTo('${boardDetailUrl}', { idx: item.idx, searchType: currentSearchType, searchKeyword: currentSearchKeyword, pageIndex: currentPageIndex });
 						});
 						
 						$gallery.append($card);
@@ -245,7 +247,7 @@
     
     <script>
 	    $(function() {
-	    	loadBoardList(1);
+	    	loadBoardList(currentPageIndex);
 	    	
 			// 검색 영역 초기값 반영
 			$('#searchType').val(currentSearchType);
@@ -253,6 +255,7 @@
 			
 			// 검색 버튼
 			$('#btnSearch').click(function(){
+				currentPageIndex = 1;
 				currentSearchType = $('#searchType').val();
 				currentSearchKeyword = $('#searchKeyword').val().trim();
 				loadBoardList(1);
@@ -293,7 +296,7 @@
 	    	$('#btnGoBoardForm').click(function() {
 	    		if (loginUserName) {
 	    			// 세션에 사용자가 있으면 게시글 작성 폼으로
-	    			postTo('${boardFormUrl}', { searchType: currentSearchType, searchKeyword: currentSearchKeyword });
+	    			postTo('${boardFormUrl}', { searchType: currentSearchType, searchKeyword: currentSearchKeyword, pageIndex: currentPageIndex });
 	    		} else {
 	    			// 없으면 로그인 페이지로
 	    			alert('글 작성하려면 로그인 하셔야 합니다');

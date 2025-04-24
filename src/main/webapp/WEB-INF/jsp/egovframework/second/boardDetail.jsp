@@ -36,6 +36,7 @@
 	    // 검색 변수(파라미터에서 값 받아와서 검색 상태 유지)
 		var currentSearchType = '<c:out value="${param.searchType}" default="title"/>';
 		var currentSearchKeyword = '<c:out value="${param.searchKeyword}" default=""/>';
+		var currentPageIndex = parseInt('<c:out value="${param.pageIndex}" default="1"/>');
 		
         // 동적 POST 폼 생성 함수
         function postTo(url, params) {
@@ -69,7 +70,7 @@
 			var idx = '${param.idx}';
 			if (!idx) {
 				alert('게시글의 idx가 없는데?');
-				postTo('${listUrl}', { searchType: currentSearchType, searchKeyword: currentSearchKeyword }); // POST로 목록 복귀
+				postTo('${listUrl}', { searchType: currentSearchType, searchKeyword: currentSearchKeyword, pageIndex: currentPageIndex }); // POST로 목록 복귀
 				return;
 			}
 			// 조회된 게시글 정보
@@ -105,13 +106,13 @@
 				},
 				error: function() {
 					alert('상세조회 중 에러 발생');
-					postTo('${listUrl}', { searchType: currentSearchType, searchKeyword: currentSearchKeyword });
+					postTo('${listUrl}', { searchType: currentSearchType, searchKeyword: currentSearchKeyword, pageIndex: currentPageIndex });
 				}
 			});
 			
 			// 뒤로가기
 			$('#btnBack').click(function(){
-				postTo('${listUrl}', { searchType: currentSearchType, searchKeyword: currentSearchKeyword });
+				postTo('${listUrl}', { searchType: currentSearchType, searchKeyword: currentSearchKeyword, pageIndex: currentPageIndex });
 			});
 			
 			// 수정버튼
@@ -122,7 +123,7 @@
 					return;
 				}
 				// 수정모드로 boardForm 페이지 띄우기 (idx 파라미터 전달)
-				postTo('${boardFormUrl}', { idx: idx, searchType: currentSearchType, searchKeyword: currentSearchKeyword });
+				postTo('${boardFormUrl}', { idx: idx, searchType: currentSearchType, searchKeyword: currentSearchKeyword, pageIndex: currentPageIndex });
 			});
 			
 			// 삭제버튼
@@ -143,7 +144,7 @@
 							alert(res.error);
 						} else {
 							alert('게시글 삭제가 완료되었습니다.');
-							window.location.href = '${listUrl}';
+							postTo('${listUrl}', { searchType: currentSearchType, searchKeyword: currentSearchKeyword, pageIndex: currentPageIndex });
 						}
 					},
 					error: function(){
