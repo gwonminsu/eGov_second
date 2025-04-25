@@ -243,7 +243,7 @@
     		
 			// 에디터의 HTML 가져오기
 			var rawHtml = $('#content').html();
-			// 모든 <img> 태그 제거
+			// 모든 <img>, <div>, <br> 태그 제거
 			var cleanedHtml = rawHtml.replace(/<img[^>]*>/g, '');
 			
 			const $sel = $('input[name=thumbnail]:checked');

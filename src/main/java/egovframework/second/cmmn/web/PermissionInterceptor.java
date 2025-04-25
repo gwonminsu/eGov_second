@@ -12,6 +12,7 @@ import egovframework.second.homework.service.BoardService;
 import egovframework.second.homework.service.BoardVO;
 import egovframework.second.homework.service.UserVO;
 
+// 게시글 수정/삭제 권한 확인하는 인터셉터
 public class PermissionInterceptor implements HandlerInterceptor {
 	
 	private static final Logger log = LoggerFactory.getLogger(PermissionInterceptor.class);
@@ -20,8 +21,7 @@ public class PermissionInterceptor implements HandlerInterceptor {
 	protected BoardService boardService;
 
 	@Override
-	public boolean preHandle(HttpServletRequest req, HttpServletResponse res, Object handler)
-			throws Exception {
+	public boolean preHandle(HttpServletRequest req, HttpServletResponse res, Object handler) throws Exception {
 		// 로그인 여부 확인
 		UserVO me = (UserVO) req.getSession().getAttribute("loginUser");
 		if (me == null) {
@@ -31,7 +31,7 @@ public class PermissionInterceptor implements HandlerInterceptor {
 		    return false;
 		}
 	
-		// 게시글 idx 꺼내기
+		// 게시글 idx 파라미터 존재 확인
 	    String idx = req.getParameter("idx");
 	    if (idx == null) {
 	    	log.info("Permission 거부: idx 파라미터 없음 (400)");

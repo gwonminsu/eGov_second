@@ -102,7 +102,8 @@
 						$('<img>').attr('src', src).appendTo($preview);
 	                });
 	                
-					$('#detailContent').text(item.content);
+	                // <div> 태그 줄바꿈
+	                $('#detailContent').html(item.content);
 				},
 				error: function() {
 					alert('상세조회 중 에러 발생');
