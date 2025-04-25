@@ -2,8 +2,6 @@ package egovframework.second.homework.service;
 
 import java.sql.Timestamp;
 
-import org.springmodules.validation.bean.conf.loader.annotation.handler.NotBlank;
-
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
